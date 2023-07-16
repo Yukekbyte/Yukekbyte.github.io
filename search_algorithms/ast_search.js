@@ -13,7 +13,7 @@ function astarSearch(matrix)
     // DONT MAKE END SQUARE PURPLE, IT FUCKS UP THE ALGORITHM
     let visited = [];
     let prioQ = new PriorityQueue();
-    prioQ.add(xs, ys, manhattan(xs, ys, xe, ye) + 0); // cost is 
+    prioQ.add(xs, ys, manhattan(xs, ys, xe, ye) + 0); // priority is manhattan + the cost to get to that square
 
     astar(visited, matrix, prioQ, xs, ys, xe, ye);
     return visited;
@@ -129,7 +129,8 @@ function animateAstarSearch(visited, interval)
 
 // the priorityqueue's implementation uses lineair insertion and is thus garbage.
 // a heap would be the obvious choice. However... this was way faster to implement
-// so in a way I do save time with this implementation, just not runtime.
+// so in a way I do save time with this implementation, just not runtime... 
+// (arguably even better given that the runtime of this algorithm is in milliseconds for the given sizes).
 class PriorityQueue
 {
     constructor()

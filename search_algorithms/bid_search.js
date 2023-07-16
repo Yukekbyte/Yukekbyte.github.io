@@ -137,7 +137,6 @@ function animateBidirectionalSearch(visited, interval)
         {
             TIMEOUTS.setTimeout(() => {
                 // check if from source or from destination
-                console.log(x, y);
                 matrix[child[0]][child[1]] = (matrix[x][y] == PATH_YELLOW || matrix[x][y] == PATH_GREEN ? PATH_YELLOW : PATH_SKYBLUE);
                 drawMazeUpdate(child[0], child[1]);
             }, interval * k);

@@ -41,14 +41,15 @@ const INFO = [
     there are no unvisited squares left.</p>\
     <p>This algorithm tends to create mazes with long corridors and few junctions.</p>",
 
-    "<h2>Breadth-first Search (Maze generation)</h2>\
-    <p align=\"justify\">Breadth-first search (BFS) is an algorithm for visiting every node in a graph. \
-    Similar to DFS, we can modify this algorithm to generate a maze instead. The algorithm \
-    starts with assigning a single square as part of the maze. It also keeps a frontier, \
-    this is a set with squares that have yet to 'expand' (the blue squares), and adds the start square to this frontier. \
+    "<h2>Prim's Algorithm</h2>\
+    <p align=\"justify\">Prim's algorithm is used to find a (minimum) spanning tree of a graph. \
+    Because a maze is just the spanning tree of a planar graph with all the walkable squares as nodes, we can use this algorithm to generate a maze. \
+    The algorithm starts with assigning a single square as part of the maze and adds it to the frontier. \
+    This is a set with squares that have yet to 'expand' shown in blue. \
     We then iteratively remove a random square from the frontier and expand it. Expanding a square makes a path in the \
     maze from the square to its unvisited adjacent squares. Afterwards, it adds these adjacent squares to the frontier. \
-    The algorithm stops when the frontier is empty.</p>\
+    If the square has no unvisited neighboring squares, nothing happens. \
+    The algorithm stops when the frontier is empty, and thus when all the squares in the maze have been expanded.</p>\
     <p>This algorithm tends to create mazes with many junctions and short dead-ends.</p>",
 
     "<h2>Recursive Division</h2>\
@@ -56,17 +57,41 @@ const INFO = [
     At each step, 2 perpendicular walls divide a part of the maze in 4 regions. Next, 3 passages \
     are made in the walls to connect those 4 regions (more than 3 passages would create a loop). The placing of the walls and \
     passages are randomized. We can then recursively call the algorithm on the 4 created regions seperately. The recursion \
-    stops when it is unable to create 4 regions when placing the walls. This happens when the region has a horizontal or vertical dimension of 1.</p>\
-    <p>The created mazes are easily recongnized by long straight walls and the abundance of H-junctions</p>",
+    stops when the region has a horizontal or vertical dimension of 1.</p>\
+    <p>The created mazes are easily recognized by long straight walls and rectangular rooms with a few entries.</p>",
 
     "<h2>Wilson's Algorithm</h2>\
-    <p align=\"justify\">This algorithm TODO</p>\
+    <p align=\"justify\">This algorithm uses loop-erased random walks to build the corridors of the maze. \
+    A <b>loop-erased random walk</b> is a process where we start 'walking' from a startsquare in the maze by choosing adjacent squares to visit at random. \
+    This path is visualised in blue. If the walk comes across a square it has already visited, we have made a loop in the path. \
+    When this happens the loop gets erased and the 'walking' process continues. The path is converted into a permanent path when we \
+    come across a square that is already part of the maze. <br> <br>\
+    The algorithm starts with a assigning the bottom left square as part of the maze and iterates over all possible squares to perform a loop-erased random walk. \
+    The disadvantage of this algorithm becomes clear when visualising the loop-erased random walks. Because at the beginning there exists only a single maze square, \
+    we can get stuck is a long process of walking without hitting that square. This makes the algorithm slow and unreliable for mazes of substantial size. \
+    The algorithm stops when no more loop-erased random walks can be performed.</p>\
     <p>This algorithm generates an unbiased sample from the uniform distribution over all the possible mazes. \
-    This means there is no characteristic that is present more than expected in the generated mazes</p>",
+    This means the algorithm has no unique characteristic that makes its created mazes recongnizable.</p>",
 
-    "<h2>Kruskal's Algorithm</h2>",
+    "<h2>Kruskal's Algorithm</h2>\
+    <p align=\"justify\">Kruskal's algorithm is used to find a (minimum) spanning tree of a graph. \
+    Just like Prim's algorithm, we use the spanning tree given by Kruskal's algorithm to generate our maze. \
+    We start by putting each square in a set containing only itself. The algorithm uses a disjoint set data structure that keeps track of these sets of square(s). \
+    It then keeps randomly choosing walls (these would be the edges in the graph) and removes those walls that do not create a loop in the maze. We can test if the wall creates a \
+    loop by checking if the squares adjacent to that wall are in the same set or not. If they are, that means they are already connected in the maze \
+    and thus we cannot remove the wall without creating a loop. If they are in different sets however, we remove the wall and join those 2 disjoint sets. We also make those squares part of the maze if they weren't already. \
+    If no more walls can be removed without creating loops, the algorithm is done.</p>\
+    <p>Mazes generated by Kruskal's algorithm tend to have more short dead-ends than usual.</p>",
 
-    "<h2>Aldous-Broder Algorithm</h2>",
+    "<h2>Aldous-Broder algorithm</h2>\
+    <p align=\"justify\">This is one of the slowest and most straighforward maze generation algorithms. \
+    We start by assigning a random square part of the maze. Then we jump to neighboring squares at random (visualised in blue). \
+    At each square, if it is already part of the maze, we do nothing. If it is not yet part of the maze, \
+    remove the wall between the squares and make the square part of the maze. The algorithm stops when all squares have been visited. \
+    This algorithm is slow because when almost all squares have been visited, the selected square keeps making redundant moves by \
+    jumping between squares that have already been visited. The chance for the selected square to land upon one the infrequent remaining squares is low for any relatively small number of steps.</p>\
+    <p>Like Wilson's algorithm, it generates an unbiased sample from the uniform distribution over all the possible mazes. \
+    This means the algorithm has no unique characteristic that makes its created mazes recongnizable.</p>",
     
     "<h2>Depth-first Search (Pathfinding)</h2>",
 
