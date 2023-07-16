@@ -1,0 +1,43 @@
+=== DFS ===
+
+<h2>Depth-first Search (Maze generation)</h2>\
+<p align=\"justify\">Depth-first search (DFS) is an algorithm for visiting every node in a graph. \
+The concept can be modified to generate a maze instead. This algorithm starts by \
+assigning a square as part of the maze. We then randomly choose adjacent squares \
+to visit and mark them as part of the maze (blue paths). If we are \
+unable to proceed without making a loop (a dead-end) we backtrack our path \
+(white paths) until we find a square that has at least one unvisited adjacent \
+square. The previously visited squares are kept on a stack (the blue path) to \
+enable backtracking. If we backtrack all the way to the beginning, we know that\
+there are no unvisited squares left.</p>\
+<p>This algorithm tends to create mazes with long corridors and few junctions.</p>
+
+
+=== BFS ===
+
+<h2>Breadth-first Search (Maze generation)</h2>\
+<p align=\"justify\">Breadth-first search (BFS) is an algorithm for visiting every node in a graph. \
+Similar to DFS, we can modify this algorithm to generate a maze instead. The algorithm \
+starts with assigning a single square as part of the maze. It also keeps a frontier, \
+this is a set with squares that have yet to 'expand' (the blue squares), and adds the start square to this frontier. \
+We then iteratively remove a random square from the frontier and expand it. Expanding a square makes a path in the \
+maze from the square to its unvisited adjacent squares. Afterwards, it adds these adjacent squares to the frontier. \
+The algorithm stops when the frontier is empty.</p>\
+<p>This algorithm tends to create mazes with many junctions and short dead-ends.</p>
+
+=== REC ===
+
+<h2>Recursive Division</h2>\
+<p align=\"justify\">Redursive Division is a maze generation algorithm that starts with an empty maze.\
+At each step, 2 perpendicular walls divide a part of the maze in 4 regions. Next, 3 passages \
+are made in the walls to connect those 4 regions (more than 3 passages would create a loop). The placing of the walls and \
+passages are randomized. We can then recursively call the algorithm on the 4 created regions seperately. The recursion \
+stops when it is unable to create 4 regions when placing the walls. This happens when the region has a horizontal or vertical dimension of 1.<\p>\
+<p>The created mazes are easily recongnized by long straight walls and the abundance of H-junctions</p>
+
+=== WIL ===
+
+<h2>Wilson's Algorithm</h2>\
+<p align=\"justify\">This algorithm was invented by </p>/
+<p>This algorithm generates an unbiased sample from the uniform distribution over all the possible mazes. \
+This means the algorithm has no unique characteristic that makes its created mazes recongnizable.</p>
