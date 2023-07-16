@@ -69,6 +69,11 @@ body {
     width: 750px;
 }
 
+h2 {
+    display: inline;
+    vertical-align: middle;
+}
+
 .button-inner {
     width: fit-content;
     height: fit-content;
@@ -139,6 +144,7 @@ td {
 
 img {
     padding: 0 10px 0 0;
+    vertical-align: middle;
 }
 
 
