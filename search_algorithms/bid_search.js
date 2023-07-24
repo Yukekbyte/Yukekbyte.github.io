@@ -28,7 +28,8 @@ function bidirectionalSearch(matrix)
 function bidir(visited, matrix, copy, sourceFrontier, destFrontier, sourceSet, destSet, xs, ys, xe, ye)
 {
     // will be used as intersection point once frontiers clash
-    let x, y;
+    let x = -1;
+    let y = -1;
     // parents of interseciton point for both frontiers (should be different)
     let xps, yps; // parents for source
     let xpd, ypd; // parents for destination
