@@ -58,7 +58,7 @@ function bidir(visited, matrix, copy, sourceFrontier, destFrontier, sourceSet, d
     matrix[xe][ye] = PATH_PURPLE;
 
     // no solution check
-    if(sourceFrontier.length == 0 || destFrontier.length == 0)
+    if(x == -1)
     {
         visited.push([[-1, -1], [[-1, -1], [-1, -1]]]);
         return;
