@@ -35,20 +35,38 @@ function astar(visited, matrix, prioQ, xs, ys, xe, ye)
     while(x != xe || y != ye)
     {
         [[x, y], oldPrio] = prioQ.min();
+        if(x == -1)
+            break;
         matrix[x][y] = PATH_YELLOW;
         let neighbors = getAllDenseNeighbors(matrix, x, y, PATH);
-        visited.push([[x, y], neighbors]);
+        
 
+        let changeParent = [];
         for(const neighbor of neighbors)
         {
             const [x1, y1] = neighbor;
-            prioQ.add(x1, y1, cost(x, y, xe, ye, oldPrio) + manhattan(x1, y1, xe, ye));
+            const parentChanged = prioQ.add(x1, y1, cost(x, y, xe, ye, oldPrio) + manhattan(x1, y1, xe, ye));
+            changeParent.push(parentChanged);
         }
+        let updatedNeighbors = []
+        for(let i = 0; i < neighbors.length; i++)
+        {
+            if(changeParent[i])
+                updatedNeighbors.push(neighbors[i]);
+        }
+        visited.push([[x, y], updatedNeighbors]);
+    }
+
+    matrix[xe][ye] = PATH_PURPLE;
+
+    // no solution check
+    if(x == -1)
+    {
+        visited.push([[-1,-1], []]);
+        return;
     }
 
     // retrace visited parents to recreate path
-    matrix[xe][ye] = PATH_PURPLE;
-
     while(x != xs || y != ys)
     {
         [x, y] = findParentInVisited(visited, x, y);
@@ -74,7 +92,7 @@ function animateAstarSearch(visited, interval)
     matrix[xs][ys] = PATH_GREEN;
     drawMazeUpdate(xs, ys);
 
-    const [xe, ye] = visited[visited.length-1][0];
+    const [xe, ye] = [1, matrix[0].length-2];
     matrix[xe][ye] = PATH_PURPLE;
     drawMazeUpdate(xe, ye);
 
@@ -90,6 +108,10 @@ function animateAstarSearch(visited, interval)
         }, interval * k);
         k++
     }
+
+    // no solution check
+    if(findParentInVisited(visited, xe, ye)[0] == -1)
+        return interval * k;
 
     // backtrack to find the path and make it PATH_ORANGE
     TIMEOUTS.setTimeout(() => {
@@ -139,35 +161,50 @@ class PriorityQueue
     }
 
     // adds (x, y) with given priority to the queue, if it is already in the queue,
-    // it updates its priority to min(oldPrio, prio)
+    // it updates its priority to min(oldPrio, prio) and puts it at the front of all the squares with the same priority
+    // returns true if the element was not yet in the queue or in the queue but priority changed.
+    // returns false if the element the given priority was higher than the priority it already had.
     add(x, y, prio)
     {
+        // check if already in the queue
         for(let i = 0; i < this.queue.length; i++)
         {
             const [x1, y1] = this.queue[i][0];
             const prio1 = this.queue[i][1];
             
-            // check if already in the queue
             if(x1 == x && y1 == y)
             {
-                this.queue[i][1] = Math.min(prio1, prio);
-                return;
+                if(prio < prio1)
+                {
+                    this.queue.splice(i, 1);
+                    this.add(x, y, Math.min(prio1, prio));
+                    return true;
+                }
+                return false;
             }
-            else if(prio1 > prio)
+        }
+
+        // not yet in queue so add as early as possible
+        for(let i = 0; i < this.queue.length; i++)
+        {
+            const prio1 = this.queue[i][1];
+
+            if(prio <= prio1)
             {
                 this.queue.splice(i, 0, [[x, y], prio]);
-                return;
+                return true;
             }
         }
 
         this.queue.push([[x, y], prio]);
+        return true;
     }
 
     // returns element with lowest cost and removes it from the queue
     min(x, y)
     {
         if(this.isEmpty())
-            return -1;
+            return [[-1, -1], -1];
         
         const min =  this.queue.shift();
         return min;

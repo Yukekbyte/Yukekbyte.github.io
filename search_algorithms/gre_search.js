@@ -36,6 +36,8 @@ function greedy(visited, matrix, prioQ, xs, ys, xe, ye)
     while(x != xe || y != ye)
     {
         [x, y] = prioQ.min()[0];
+        if(x == -1)
+            break;
         matrix[x][y] = PATH_YELLOW;
         let neighbors = getAllDenseNeighbors(matrix, x, y, PATH);
         visited.push([[x, y], neighbors]);
@@ -46,10 +48,16 @@ function greedy(visited, matrix, prioQ, xs, ys, xe, ye)
             prioQ.add(x1, y1, manhattan(x1, y1, xe, ye));
         }
     }
-
-    // retrace visited parents to recreate path
     matrix[xe][ye] = PATH_PURPLE;
 
+    // no solution check
+    if(x == -1)
+    {
+        visited.push([[-1,-1], []]);
+        return;
+    }
+
+    // retrace visited parents to recreate path
     while(x != xs || y != ys)
     {
         [x, y] = findParentInVisited(visited, x, y);
@@ -69,7 +77,7 @@ function animateGreedySearch(visited, interval)
     matrix[xs][ys] = PATH_GREEN;
     drawMazeUpdate(xs, ys);
 
-    const [xe, ye] = visited[visited.length-1][0];
+    const [xe, ye] = [1, matrix[0].length-2];
     matrix[xe][ye] = PATH_PURPLE;
     drawMazeUpdate(xe, ye);
 
@@ -85,6 +93,10 @@ function animateGreedySearch(visited, interval)
         }, interval * k);
         k++
     }
+
+    // no solution check
+    if(findParentInVisited(visited, xe, ye)[0] == -1)
+    return interval * k;
 
     // backtrack to find the path and make it PATH_ORANGE
     TIMEOUTS.setTimeout(() => {

@@ -21,11 +21,12 @@ const REC = 2;
 const WIL = 3;
 const KRU = 4;
 const ALD = 5;
-const SDFS = 6;
-const SBFS = 7;
-const SAST = 8;
-const SGRE = 9;
-const SBID = 10;
+const SAN = 6;
+const SDFS = 7;
+const SBFS = 8;
+const SAST = 9;
+const SGRE = 10;
+const SBID = 11;
 
 //algorithm info texts
 const INFO = [      
@@ -92,6 +93,12 @@ const INFO = [
     jumping between squares that have already been visited. The chance for the selected square to land upon one the infrequent remaining squares is low for any relatively small number of steps.</p>\
     <p>Like Wilson's algorithm, it generates an unbiased sample from the uniform distribution over all the possible mazes. \
     This means the algorithm has no unique characteristic that makes its created mazes recongnizable.</p>",
+
+    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Sandbox</h2>\
+    <p align=\"justify\">This is a sandbox to easily make your own mazes. \
+    Clicking the <b>Generate</b> button clears your maze instead of generating one. \
+    You can click on the squares to change them to either walls or paths. \
+    You can also do this outside the sandbox to modify an existing maze.</p>",
     
     "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Depth-first Search (Pathfinding)</h2>\
     <p align=\"justify\">Depth-first search (DFS) is a pathfinding algorithm that starts from the start square and looks in a single direction \
@@ -355,9 +362,11 @@ function hasOtherDenseWallNeighbor(matrix, x, y, x1, y1)
 // WARNING: only useable for a specific visited layout such as in the SBFS, SAST and SGRE algorithms
 function findParentInVisited(visited, x, y)
 {
-    // disgusting lineair search because time complexity is no issue
+    // disgusting reversed lineair search because time complexity is no issue
     // and can't be bothered to make a hashmap or a smart structure of arrays to find parent
-    for(let i = 0; i < visited.length; i++)
+
+    // reversed is important to make sure the algorithms get the most recent parent in case an update happend (for A* and greedy)
+    for(let i = visited.length - 1; i >= 0; i--)
         {
             let [x1, y1] = visited[i][0]; // parent
             let children = visited[i][1];

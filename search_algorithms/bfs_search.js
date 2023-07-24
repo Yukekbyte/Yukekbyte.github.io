@@ -23,7 +23,7 @@ function sbf(visited, matrix, frontier, xs, ys, xe, ye)
     let x, y;
     let neighbors;
 
-    while(frontier.length > 0) // normally we expect to never break this condition (there should always be a path)
+    while(frontier.length > 0) // if there is a solution, we do not break this condition
     {
         [x, y] = frontier.shift();
 
@@ -45,11 +45,18 @@ function sbf(visited, matrix, frontier, xs, ys, xe, ye)
         visited.push([[x, y], neighbors]);
     }
 
+    matrix[xe][ye] = PATH_PURPLE;
+
+    // check if no solution found
+    if(frontier.length == 0)
+    {
+        visited.push([[-1, -1], []]);
+        return;
+    }
+    
     // retrace visited parents to recreate path
     x = xe;
     y = ye;
-
-    matrix[xe][ye] = PATH_PURPLE;
 
     while(x != xs || y != ys)
     {
@@ -70,7 +77,7 @@ function animateSearchBreadthFirst(visited, interval)
     matrix[xs][ys] = PATH_GREEN;
     drawMazeUpdate(xs, ys);
 
-    const [xe, ye] = visited[visited.length-1][0];
+    const [xe, ye] = [1, matrix[0].length-2];
     matrix[xe][ye] = PATH_PURPLE;
     drawMazeUpdate(xe, ye);
 
@@ -102,6 +109,11 @@ function animateSearchBreadthFirst(visited, interval)
             k++
         }
     }
+
+    // no solution check
+    if(findParentInVisited(visited, xe, ye)[0] == -1)
+    return interval * k;
+
 
     // backtrack to find the path and make it PATH_ORANGE
     TIMEOUTS.setTimeout(() => {

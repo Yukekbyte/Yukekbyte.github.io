@@ -13,6 +13,7 @@ let isAnimating = false;  // true if maze OR path is generating
 let isGenerating = false; // true if maze is generating
 let animateFade = false;
 let animateSquare = false;
+let dragToggle = false;
 
 // pathfinding
 let searchAlgorithm = SDFS;
@@ -26,6 +27,8 @@ window.onload = function()
     pressedVertical("vertical-N");
     pressedSpeed("speed-3");
     pressedWalls("walls-10");
+    document.getElementById("animate-square-checkbox").checked = true;
+    animateSquare = true;
 
     // generate first show-off maze
     generateMaze(false);
@@ -164,6 +167,9 @@ function changeAlgorithm(id)
         case "ALD-button":
             algorithm = ALD;
             break;
+        case "SAN-button":
+            algorithm = SAN;
+            break;
     }
 
     // update info text
@@ -287,6 +293,7 @@ function pressedAlgorithm(id)
     document.getElementById("WIL-button").classList.remove("button-outer-active");
     document.getElementById("KRU-button").classList.remove("button-outer-active");
     document.getElementById("ALD-button").classList.remove("button-outer-active");
+    document.getElementById("SAN-button").classList.remove("button-outer-active");
     document.getElementById(id).classList.add("button-outer-active");
 }
 
@@ -406,7 +413,7 @@ function drawMaze()
                     color = "black"
                     break;
             }
-            maze_html += `<td bgcolor=${color}> <div id="${i}-${j}" class="dummy"></div> </td>`;
+            maze_html += `<td bgcolor=${color} onmousedown="switchDragToggle(${i},${j}, true)" onmouseup="switchDragToggle(${i},${j}, false)" onmouseenter="clickSquare(${i},${j})" draggable="false" ondragstart="return false;"> <div id="${i}-${j}" class="dummy"></div> </td>`;
         }
 
         maze_html += "</tr>";
@@ -506,6 +513,29 @@ function drawMazeUpdate(x, y, animated=true, duration=350)
     else
         cell.style.backgroundColor = newColor;
     
+}
+
+function switchDragToggle(x, y, value)
+{
+    console.log("switching");
+    dragToggle = value;
+    clickSquare(x, y);
+}
+
+function clickSquare(x, y)
+{
+    if(isAnimating || !dragToggle)
+        return;
+
+    const n = matrix.length;
+    const m = matrix[0].length;
+
+    if(matrix[x][y] != WALL)
+        matrix[x][y] = WALL;
+    else if(0 < x && x < n-1 && 0 < y && y < m-1)
+        matrix[x][y] = PATH;
+    
+    drawMazeUpdate(x, y);
 }
 
 // uses the removedWalls variable to change the amount of walls in the maze by the WALLS[i] percentage
@@ -658,6 +688,9 @@ function generateMaze(animate)
         case ALD:
             generateALDMaze(animate);
             break;
+        case SAN:
+            generateSANMaze(animate);
+            break;
     }
 }
 
@@ -776,10 +809,45 @@ function generateRECMaze(animate)
 
 }
 
+function generateSANMaze(animate)
+{
+    startAnimating(true);
+
+    if(animate)
+    {
+        const n = matrix.length;
+        const m = matrix[0].length;
+        for(let i = 1; i < n-1; i++)
+            for(let j = 1; j < m-1; j++)
+            {
+                matrix[i][j] = PATH;
+                drawMazeUpdate(i, j);
+            }
+    }
+    else
+    {
+        clearMaze();
+        const n = matrix.length;
+        const m = matrix[0].length;
+        for(let i = 1; i < n-1; i++)
+            for(let j = 1; j < m-1; j++)
+                matrix[i][j] = PATH;
+        drawMaze();
+    }
+
+    stoppedAnimating();
+}
+
 function generateSearch()
 {
     if(!isGenerating)
     {
+        // make start and end squares PATH (in case of modification)
+        const n = matrix.length;
+        const m = matrix[0].length;
+        matrix[1][m-2] = PATH;
+        matrix[n-2][1] = PATH;
+
         switch(searchAlgorithm)
         {
             case SDFS:

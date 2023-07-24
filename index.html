@@ -35,6 +35,7 @@
             <button id="BFS-button" class="button-outer" onclick="changeAlgorithm(id)">Prim</button>
             <button id="KRU-button" class="button-outer" onclick="changeAlgorithm(id)">Kruskal</button>
             <button id="ALD-button" class="button-outer" onclick="changeAlgorithm(id)">Aldous</button>
+            <button id="SAN-button" class="button-outer" onclick="changeAlgorithm(id)">Sandbox</button>
 
         </div>
 
@@ -90,7 +91,7 @@
                         <div class="toggle">
                             <img src="symbols/square_fade_symbol.png" width="45">
                             <label class="switch">
-                                <input type="checkbox" onclick="animateFade = !animateFade">
+                                <input id="animate-fade-checkbox" type="checkbox" onclick="animateFade = !animateFade">
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -98,7 +99,7 @@
                         <div class="toggle">
                             <img src="symbols/square_expanding_symbol.png" width="45">
                             <label class="switch">
-                                <input type="checkbox" onclick="animateSquare = !animateSquare">
+                                <input id="animate-square-checkbox" type="checkbox" onclick="animateSquare = !animateSquare">
                                 <span class="slider"></span>
                             </label>
                         </div>

@@ -55,11 +55,17 @@ function bidir(visited, matrix, copy, sourceFrontier, destFrontier, sourceSet, d
         }
     }
 
+    matrix[xe][ye] = PATH_PURPLE;
+
+    // no solution check
+    if(sourceFrontier.length == 0 || destFrontier.length == 0)
+    {
+        visited.push([[-1, -1], [[-1, -1], [-1, -1]]]);
+        return;
+    }
+
     // retrace visited parents to recreate path with (x, y) as intersection point
     // and respective parents
-
-    // add intersection with parents at end of visited for animate
-    visited.push([[x, y], [[xps, yps], [xpd, ypd]]]);
 
     matrix[x][y] = PATH_ORANGE;
 
@@ -68,12 +74,14 @@ function bidir(visited, matrix, copy, sourceFrontier, destFrontier, sourceSet, d
     // retrace to end
     retrace(matrix, visited, xpd, ypd, xe ,ye);
 
+    // add intersection with parents at end of visited for animate
+    visited.push([[x, y], [[xps, yps], [xpd, ypd]]]);
+
     // merge values of matrix and copy
     for(let i = 1; i < matrix.length - 1; i++)
         for(let j = 1; j < matrix[0].length - 1; j++)
             if(copy[i][j] == PATH_SKYBLUE && matrix[i][j] != PATH_ORANGE)
                 matrix[i][j] = PATH_SKYBLUE;
-    matrix[xe][ye] = PATH_PURPLE;
 }
 
 function expand(matrix, visited, frontier, set, otherSet, value)
@@ -143,11 +151,16 @@ function animateBidirectionalSearch(visited, interval)
             k++
         }
     }
+
+    let [[x, y], [[xps, yps], [xpd, ypd]]] = visited[visited.length - 1];
+    visited.pop(); // to not break findParentInVisited()
+
+    // no solution check
+    if(findParentInVisited(visited, xps, yps)[0] == -1 || findParentInVisited(visited, xpd, ypd)[0] == -1)
+        return;
     
 
     // retrace
-    let [[x, y], [[xps, yps], [xpd, ypd]]] = visited[visited.length - 1];
-
     TIMEOUTS.setTimeout(() => {
         matrix[x][y] = PATH_ORANGE;
         drawMazeUpdate(x, y);
@@ -217,10 +230,6 @@ function animateBidirectionalSearch(visited, interval)
         if(reachedStart && reachedEnd)
             break;
     }
-
-    
-
-    
 
     return interval * k;
 }

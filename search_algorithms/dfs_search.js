@@ -28,13 +28,17 @@ function sdf(visited, matrix, stack, xs, ys, xe, ye)
     let y = ys;
     let x1, y1;
 
-    while((x != xe || y != ye) && x != -1)
+    while(x != xe || y != ye)
     {
         [x1, y1] = findDenseNeighbor(matrix, x, y, PATH);
 
         if(x1 == -1)
-            [x, y, x1, y1] = searchBacktrack(matrix, stack, visited);
+            [x1, y1] = searchBacktrack(matrix, stack, visited);
         
+        // backtracking failed (=no solution)
+        if(x1 == -1)
+            break;
+
         stack.push([x1, y1]);
         visited.push([x1, y1]);
         matrix[x1][y1] = PATH_ORANGE;
@@ -42,7 +46,6 @@ function sdf(visited, matrix, stack, xs, ys, xe, ye)
         x = x1;
         y = y1;
     }
-
     matrix[x][y] = PATH_PURPLE;
 }
 
@@ -61,11 +64,12 @@ function searchBacktrack(matrix, stack, visited)
         if(x1 != -1)
         {
             stack.push([x,y]);
-            return [x, y, x1, y1];
+            return [x1, y1];
         }
         else
             matrix[x][y] = PATH_YELLOW;
     }
+    return [-1,-1];
 }
 
 function animateSearchDepthFirst(visited, interval)
@@ -74,7 +78,7 @@ function animateSearchDepthFirst(visited, interval)
 
     // start and end
     const [xs, ys] = visited[0];
-    const [xe, ye] = visited[visited.length - 1];
+    const [xe, ye] = [1, matrix[0].length-2];
     matrix[xs][ys] = PATH_GREEN;
     matrix[xe][ye] = PATH_PURPLE;
 
@@ -89,7 +93,7 @@ function animateSearchDepthFirst(visited, interval)
             value = matrix[curr[0]][curr[1]];
             valueNext = matrix[next[0]][next[1]];
 
-            if(valueNext == PATH_ORANGE)
+            if(valueNext == PATH_ORANGE || valueNext == PATH_GREEN)
                 matrix[curr[0]][curr[1]] = PATH_YELLOW;
             else
                 matrix[curr[0]][curr[1]] = PATH_ORANGE;
