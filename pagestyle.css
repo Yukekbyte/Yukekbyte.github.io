@@ -1,0 +1,210 @@
+/* GENERAL FORMAT OF THE STYLE SHEET OF A PAGE */
+
+html {
+    background-color: var(--background-darker);
+}
+
+body {
+    background-color: white;
+    font-size: 22px;
+    font-family: sans-serif;
+}
+
+#outer {
+    background-color: var(--background);
+    width: 100%;
+    padding: 20px 0px;
+}
+
+#outer-upper, #outer-lower {
+    padding: 0px 20px;
+
+    /* puts buttons besides heading */
+    display: flex;
+    align-items: center;
+}
+
+.button-outer {
+    width: fit-content;
+    height: fit-content;
+    padding: 15px;
+    border: 7px solid var(--foreground);
+    background-color: var(--background);
+    border-radius: 20px;
+    color: var(--foreground);
+
+    font-weight: bold;
+    font-size: 1em;
+
+    /* space between buttons */
+    margin: 25px;
+}
+.button-outer:active, .button-outer-active {
+    color: var(--background);
+    background-color: var(--foreground);
+}
+
+
+
+#inner {
+    background-color: var(--foreground);
+    width: 100%;
+
+    display: inline-flex;
+    justify-content: flex-start;
+}
+
+#inner-left, #inner-middle, #inner-right {
+    padding: 20px;
+}
+
+#inner-left {
+    /* display buttons in center
+    display: flex;
+    align-items: center;
+    justify-content: center;*/
+}
+
+#inner-right {
+    width: 750px;
+}
+
+h2 {
+    display: inline;
+    vertical-align: middle;
+}
+
+.button-inner {
+    width: fit-content;
+    height: fit-content;
+    padding: 15px;
+    border-width: 0px;
+    background-color: var(--background);
+    border-radius: 20px;
+    color: black;
+
+    font-weight: bold;
+    font-size: 1em;
+
+    /* space between buttons */
+    margin: 25px;
+
+    /* buttons display below each other*/
+    display: block;
+}
+.button-inner:active {
+    background-color: var(--foreground);
+}
+
+.selector {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.buttons-in-selector {
+    background-color: var(--background);
+}
+
+.button-selector {
+    background-color: var(--background);
+    border: none;
+    border-radius: 0;
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+    float: left;
+
+    font-size: 1em;
+}
+.button-selector:active,.button-selector-active {
+    background-color: var(--foreground);
+    font-weight: bold;
+}
+.button-selector-inactive{
+    background-color: var(--background-darker);
+}
+
+td {
+    width: 20px;
+    height: 20px;
+
+    position: relative;
+}
+
+.dummy {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 1px;
+    height: 1px;
+    z-index: 5;
+}
+
+img {
+    padding: 0 10px 0 0;
+    vertical-align: middle;
+}
+
+
+/* mostly code from internet for toggle switch CTRL-C CTRL-V*/
+.toggle {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 88px;
+    height: 50px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--background-darker);
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 38px;
+    width: 38px;
+    left: 6px;
+    bottom: 6px;
+    background-color: var(--foreground);
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: var(--background);
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px var(--background);
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(38px);
+    -ms-transform: translateX(38px);
+    transform: translateX(38px);
+  }

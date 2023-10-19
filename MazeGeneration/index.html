@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset= "UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../pagestyle.css">
+    <script src="header.js"></script>
+    <script src="main.js"></script>
+    <script src="maze_algorithms/dfs.js"></script>
+    <script src="maze_algorithms/bfs.js"></script>
+    <script src="maze_algorithms/kruskal.js"></script>
+    <script src="maze_algorithms/wilson.js"></script>
+    <script src="maze_algorithms/aldous.js"></script>
+    <script src="maze_algorithms/recursive.js"></script>
+    <script src="search_algorithms/dfs_search.js"></script>
+    <script src="search_algorithms/bfs_search.js"></script>
+    <script src="search_algorithms/ast_search.js"></script>
+    <script src="search_algorithms/gre_search.js"></script>
+    <script src="search_algorithms/bid_search.js"></script>
+    
+    <title>Maze visualizer</title>
+</head>
+
+<body>
+
+    <div id="outer">
+        
+        
+        <div id="outer-upper">
+        
+            <h1>Maze Generation</h1>
+
+            <button id="DFS-button" class="button-outer" onclick="changeAlgorithm(id)">DFS</button>
+            <button id="REC-button" class="button-outer" onclick="changeAlgorithm(id)">Recursive</button>
+            <button id="WIL-button" class="button-outer" onclick="changeAlgorithm(id)">Wilson</button>
+            <button id="BFS-button" class="button-outer" onclick="changeAlgorithm(id)">Prim</button>
+            <button id="KRU-button" class="button-outer" onclick="changeAlgorithm(id)">Kruskal</button>
+            <button id="ALD-button" class="button-outer" onclick="changeAlgorithm(id)">Aldous</button>
+            <button id="SAN-button" class="button-outer" onclick="changeAlgorithm(id)">Sandbox</button>
+
+        </div>
+
+        <div id="inner">
+
+            <div id="inner-left">
+                <div id="inner-left-inner">
+                    <div>
+                        <div class="selector">
+                            <img src="symbols/double_arrow_horizontal_symbol.png" width="45">
+                            <div class="buttons-in-selector">
+                                <button id="horizontal-XS" class="button-selector" onclick="changeHorizontal(id)">XS</button>
+                                <button id="horizontal-S"  class="button-selector" onclick="changeHorizontal(id)">S</button>
+                                <button id="horizontal-N"  class="button-selector" onclick="changeHorizontal(id)">N</button>
+                                <button id="horizontal-L"  class="button-selector" onclick="changeHorizontal(id)">L</button>
+                                <button id="horizontal-XL" class="button-selector" onclick="changeHorizontal(id)">XL</button>
+                            </div>
+                        </div>
+
+                        <div class="selector">
+                            <img src="symbols/double_arrow_vertical_symbol.png" width="45">
+                            <div class="buttons-in-selector">
+                                <button id="vertical-XS" class="button-selector" onclick="changeVertical(id)">XS</button>
+                                <button id="vertical-S"  class="button-selector" onclick="changeVertical(id)">S</button>
+                                <button id="vertical-N"  class="button-selector" onclick="changeVertical(id)">N</button>
+                                <button id="vertical-L"  class="button-selector" onclick="changeVertical(id)">L</button>
+                                <button id="vertical-XL" class="button-selector" onclick="changeVertical(id)">XL</button>
+                            </div>
+                        </div>
+
+                        <div class="selector">
+                            <img src="symbols/speed_symbol.png" width="45">
+                            <div class="buttons-in-selector">
+                                <button id="speed-1" class="button-selector" onclick="changeSpeed(id)">1</button>
+                                <button id="speed-2" class="button-selector" onclick="changeSpeed(id)">2</button>
+                                <button id="speed-3" class="button-selector" onclick="changeSpeed(id)">3</button>
+                                <button id="speed-4" class="button-selector" onclick="changeSpeed(id)">4</button>
+                                <button id="speed-5" class="button-selector" onclick="changeSpeed(id)">5</button>
+                            </div>
+                        </div>
+
+                        <div class="selector">
+                            <img src="symbols/wall_symbol.png" width="45">
+                            <div class="buttons-in-selector">
+                                <button id="walls-6"  class="button-selector" onclick="changeWalls(id)">.6</button>
+                                <button id="walls-7"  class="button-selector" onclick="changeWalls(id)">.7</button>
+                                <button id="walls-8"  class="button-selector" onclick="changeWalls(id)">.8</button>
+                                <button id="walls-9"  class="button-selector" onclick="changeWalls(id)">.9</button>
+                                <button id="walls-10" class="button-selector" onclick="changeWalls(id)">1.0</button>
+                            </div>
+                        </div>
+
+                        <div class="toggle">
+                            <img src="symbols/square_fade_symbol.png" width="45">
+                            <label class="switch">
+                                <input id="animate-fade-checkbox" type="checkbox" onclick="animateFade = !animateFade">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle">
+                            <img src="symbols/square_expanding_symbol.png" width="45">
+                            <label class="switch">
+                                <input id="animate-square-checkbox" type="checkbox" onclick="animateSquare = !animateSquare">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                    </div>
+                
+                    <button class="button-inner" onclick="generateMaze(true)">Generate</button>
+                    <button id="button-find" class="button-inner" onclick="generateSearch()">Find</button>
+                </div>
+            </div>
+
+            <div id="inner-middle">
+                <div id="maze">
+                </div>
+            </div>
+
+            <div id="inner-right">
+                <div id="info">
+                </div>
+            </div>
+            
+        </div>
+
+        <div id="outer-lower">
+
+            <h1>Pathfinding</h1>
+
+            <button id="SDFS-button" class="button-outer" onclick="changeSearchAlgorithm(id)">DFS</button>
+            <button id="SBFS-button" class="button-outer" onclick="changeSearchAlgorithm(id)">BFS</button>
+            <button id="SAST-button" class="button-outer" onclick="changeSearchAlgorithm(id)">A*</button>
+            <button id="SGRE-button" class="button-outer" onclick="changeSearchAlgorithm(id)">Greedy</button>
+            <button id="SBID-button" class="button-outer" onclick="changeSearchAlgorithm(id)">Bidirectional</button>
+
+        </div>
+
+    </div>
+
+    
+</body>
+</html>

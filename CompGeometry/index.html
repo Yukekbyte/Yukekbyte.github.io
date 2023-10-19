@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../pagestyle.css">
+        <script src="datastructs.js"></script>
+        <script src="main.js"></script>
+
+        <title>Computational Geometry</title>
+    </head>
+
+    <body>
+
+        <div id="outer">
+
+            <div id="outer-upper">
+                <h1>Basic Geometry</h1>
+
+                <button class="button-outer">Convex Hull</button>
+                <button class="button-outer">Line intersection</button>
+                <button class="button-outer">Polygon Triangulation</button>
+                <button class="button-outer">Planar subdivision</button>
+
+            </div>
+
+            <div id="inner">
+    
+                <div id="inner-left">
+
+                    <div class="selector">
+                        <img src="symbols/speed_symbol.png" width="45">
+                        <div class="buttons-in-selector">
+                            <button id="speed-1" class="button-selector" onclick="changeSpeed(id)">1</button>
+                            <button id="speed-2" class="button-selector" onclick="changeSpeed(id)">2</button>
+                            <button id="speed-3" class="button-selector" onclick="changeSpeed(id)">3</button>
+                            <button id="speed-4" class="button-selector" onclick="changeSpeed(id)">4</button>
+                            <button id="speed-5" class="button-selector" onclick="changeSpeed(id)">5</button>
+                        </div>
+                    </div>
+
+                    <button class="button-inner">Generate</button>
+                </div>
+    
+                <div id="inner-middle">
+                    <div id="mainCanvas"></div>
+                </div>
+    
+                <div id="inner-right">
+                    <p>This is where the algorithm gets explained.</p>
+                </div>
+    
+            </div>
+
+            <div id="outer-lower">
+                <h1>Complex Geometry</h1>
+
+                <button class="button-outer">Line Intersections</button>
+                <button class="button-outer">Art Gallery</button>
+                <button class="button-outer">Fortress</button>
+            </div>
+        
+        </div>
+
+        
+
+    </body>
+</html>

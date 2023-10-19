@@ -1,0 +1,9 @@
+:root {
+    --foreground: rgb(217, 217, 109);
+    --background: rgb(156, 158, 40);
+    --background-darker: rgb(149, 149, 149);
+}
+
+#inner-left {
+    width: 560px;
+}
