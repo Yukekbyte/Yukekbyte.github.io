@@ -1,30 +1,25 @@
-/* eslint-disable no-undef */
-
-let canvas = new Canvas([], []);
+let canvas = new Canvas([], [], []);
 let canvasElem;
 let ctx;
 
 window.onload = function()
 {
-    const p1 = new Point(100, 100);
-    const p2 = new Point(200, 70);
-    const p3 = new Point(250, 140);
-    const p4 = new Point(190, 200);
-    const p5 = new Point(120, 190, 15, "#FF0000", "#FF00FF");
-    const p6 = new Point(60, 150);
+    const canvas_html = "<canvas id=\"canvas\" width=\"1000\" height=\"800\" style=\"border: 10px solid #000000\"></canvas>";
+    document.getElementById("mainCanvas").innerHTML = canvas_html;
+    canvasElem = document.getElementById("canvas");
+    ctx = canvasElem.getContext("2d");
     
-    const p7 = new Point(240, 350);
-    const p8 = new Point(670, 730);
-    const p9 = new Point(560, 550);
-    const p10 = new Point(460, 310);
+    // set bottom left corner as (0,0).
+    ctx.translate(0, canvasElem.height);
+    ctx.scale(1, -1);
 
-    const line = new Line(p7, p8);
-    const polygon = new Polygon([p1, p2, p3, p4, p5, p6], 4, "#00FF00", "#00FFFF", true);
+    // DRAWING
+    const points = GenerateRandomPoints(14);
+    const convexHull = ConvexHull(points);
+    canvas.points = points;
+    const convexHullPolygon = new Polygon(convexHull, false, 0, "#54d16d", "#54d16d");
+    canvas.polygons.push(convexHullPolygon);
 
-    canvas.points = [p9, p10];
-    canvas.lines = [line];
-    canvas.polygons = [polygon];
-    
     DrawCanvas();
 }
 
@@ -67,6 +62,7 @@ function drawPolygon(polygon)
     ctx.fill();
 
     // border
+    ctx.lineWidth = polygon.borderWidth;
     ctx.strokeStyle = polygon.borderColor;
     ctx.stroke();
 
@@ -78,14 +74,9 @@ function drawPolygon(polygon)
 
 function DrawCanvas()
 {
-    const canvas_html = "<canvas id=\"canvas\" width=\"1000\" height=\"800\" style=\"border: 2px solid #000000\"></canvas>";
-    document.getElementById("mainCanvas").innerHTML = canvas_html;
-    canvasElem = document.getElementById("canvas");
-    ctx = canvasElem.getContext("2d");
-
-    for(const point of canvas.points)
+    for(const polygon of canvas.polygons)
     {
-        drawPoint(point);
+        drawPolygon(polygon);
     }
 
     for(const line of canvas.lines)
@@ -93,8 +84,26 @@ function DrawCanvas()
         drawLine(line);
     }
 
-    for(const polygon of canvas.polygons)
+    for(const point of canvas.points)
     {
-        drawPolygon(polygon);
+        drawPoint(point);
     }
+}
+
+function GenerateRandomPoints(n)
+{
+    const width = canvasElem.width;
+    const height = canvasElem.height;
+
+    points = [];
+
+    for(let i = 0; i < n; i++)
+    {
+        let x = Math.random() * width;
+        let y = Math.random() * height;
+        let p = new Point(x, y);
+        points.push(p);
+    }
+
+    return points;
 }

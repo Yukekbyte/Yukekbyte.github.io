@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 class Point
 {
     constructor(x, y, radius=8, color="#000000", fillColor="#000000")
@@ -25,7 +23,7 @@ class Line
 
 class Polygon
 {
-    constructor(points, borderWidth=7, borderColor="#000000", fillColor="#FFFFFF", pointsVisible=true)
+    constructor(points, pointsVisible=true, borderWidth=7, borderColor="#000000", fillColor="#FFFFFF")
     {
         this.points = points;
         this.borderWidth = borderWidth;
@@ -37,9 +35,10 @@ class Polygon
 
 class Canvas
 {
-    constructor(points, lines)
+    constructor(points, lines, polygons)
     {
         this.points = points;
         this.lines = lines;
+        this.polygons = polygons;
     }
 }
