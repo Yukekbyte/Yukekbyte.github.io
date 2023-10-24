@@ -1,18 +1,19 @@
 class Point
 {
-    constructor(x, y, radius=8, color="#000000", fillColor="#000000")
+    constructor(x, y, radius=8, borderWidth=3, borderColor=BLACK, fillColor=BLACK)
     {
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.color = color;
+        this.borderWidth = borderWidth;
+        this.borderColor = borderColor;
         this.fillColor = fillColor;
     }
 }
 
 class Line
 {
-    constructor(p1, p2, width=7, color="#000000")
+    constructor(p1, p2, width=7, color=BLACK)
     {
         this.p1 = p1;
         this.p2 = p2;
@@ -23,7 +24,7 @@ class Line
 
 class Polygon
 {
-    constructor(points, pointsVisible=true, borderWidth=7, borderColor="#000000", fillColor="#FFFFFF")
+    constructor(points, pointsVisible=true, borderWidth=7, borderColor=BLACK, fillColor=WHITE)
     {
         this.points = points;
         this.borderWidth = borderWidth;

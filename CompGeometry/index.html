@@ -4,8 +4,10 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="../pagestyle.css">
+        <script src="header.js"></script>
         <script src="datastructs.js"></script>
         <script src="algorithms/convexhull.js"></script>
+        <script src="algorithms/intersections.js"></script>
         <script src="main.js"></script>
 
         <title>Computational Geometry</title>
@@ -18,10 +20,10 @@
             <div id="outer-upper">
                 <h1>Basic Geometry</h1>
 
-                <button class="button-outer">Convex Hull</button>
-                <button class="button-outer">Line intersection</button>
-                <button class="button-outer">Polygon Triangulation</button>
-                <button class="button-outer">Planar subdivision</button>
+                <button id="CXH-button" class="button-outer" onclick="changeAlgorithm(id)">Convex Hull</button>
+                <button id="LIS-button" class="button-outer" onclick="changeAlgorithm(id)">Line intersections</button>
+                <button id="TRI-button" class="button-outer" onclick="changeAlgorithm(id)">Polygon Triangulation</button>
+                <button id="SUB-button" class="button-outer" onclick="changeAlgorithm(id)">Planar subdivision</button>
 
             </div>
 
@@ -40,7 +42,8 @@
                         </div>
                     </div>
 
-                    <button class="button-inner">Generate</button>
+                    <button class="button-inner" onclick="generateAlgorithm(true, false)">Generate New</button>
+                    <button id="button-regenerate" class="button-inner" onclick="generateAlgorithm(true, true)">Regenerate</button>
                 </div>
     
                 <div id="inner-middle">
@@ -48,17 +51,15 @@
                 </div>
     
                 <div id="inner-right">
-                    <p>This is where the algorithm gets explained.</p>
+                    <div id="info"></div>
                 </div>
     
             </div>
 
             <div id="outer-lower">
                 <h1>Complex Geometry</h1>
-
-                <button class="button-outer">Line Intersections</button>
-                <button class="button-outer">Art Gallery</button>
-                <button class="button-outer">Fortress</button>
+                <button id="ART-button" class="button-outer" onclick="changeAlgorithm(id)">Art Gallery</button>
+                <button id="FTS-button" class="button-outer" onclick="changeAlgorithm(id)">Fortress</button>
             </div>
         
         </div>

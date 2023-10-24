@@ -1,5 +1,5 @@
 // Graham's Scan Convex Hull algorithm
-function ConvexHull(points)
+function convexHull(points)
 {
     // find lowest point
     const n = points.length;
@@ -12,40 +12,36 @@ function ConvexHull(points)
     const p01 = new Point(p0.x+1,p0.y);
 
     // calculate angle with p0
-    let sorted = [];
+    let values = [];
     for(let i = 0; i < n; i++)
     {
-        if(i == min)
-            sorted.push([p0, 0]);
+        if(i == min) 
+            values.push(0);
         else
         {
             const p = points[i];
-            let val = cross(p0, p01, p);
+            let val = crossNorm(p0, p01, p);
             if(p.x < p0.x)
             val = 2 - val; // angle > 90 deg
-            sorted.push([p, val]);
+            values.push(val);
         }   
     }
 
     // sort points on angle with p0
-    quicksort(sorted, 0, n);
-
-    // remove angles
-    for(let i = 0; i < n; i++)
-        sorted[i] = sorted[i][0];
+    quicksort(points, values, 0, n);
 
     // graham's scan: add new point to convex hull if angle with previous points not greater than 180 deg
     //                delete second last point otherwise
-    let hull = [p0, sorted[1]];
+    let hull = [p0, points[1]];
     let m, p1, p2, p3;
     let i = 1;
     while(i < n)
-    {
+    { 
         m = hull.length;
         p1 = hull[m-2];
         p2 = hull[m-1];
-        p3 = sorted[i];
-        if(cross(p2, p3, p1) <= 0)
+        p3 = points[i];
+        if(cross(p2, p3, p1) < 0)
             hull.pop();
         else
         {
@@ -56,43 +52,152 @@ function ConvexHull(points)
     return hull;
 }
 
-
-// Returns normalized cross product of the vectors (p0,p1) and (p0,p2).
-function cross(p0, p1, p2)
+async function animateConvexHull(points, interval)
 {
-    const vx = p1.x-p0.x;
-    const vy = p1.y-p0.y;
-    const wx = p2.x-p0.x;
-    const wy = p2.y-p0.y;
-    
-    return (vx*wy - vy*wx) * 1/(Math.sqrt((vx**2 + vy**2)*(wx**2+wy**2)));
-}
+    //#######################
+    // draw initial points
+    canvas.points = points;
+    resetPoints();
+    redrawCanvas();
+    // keep track of timeout count
+    let k = 0;
+    //#######################
 
-// Classic quicksort on angle of points
-function quicksort(points, start, end)
-{
-    if(start >= end - 1) 
-        return;
+    // find lowest point
+    const n = points.length;
+    let min = 0;
+    for(let i = 1; i < n; i++)
+        if(points[i].y < points[min].y)
+            min = i;
 
-    const idx = partition(points, start, end)
-    quicksort(points, start, idx);
-    quicksort(points, idx+1, end);
-}
+    const p0 = points[min];
+    const p01 = new Point(p0.x+100,p0.y);
 
-function partition(points, start, end)
-{
-    const pivot = points[start][1];
+    //########################
+    // draw line through p0
+    p0.borderColor = RED;
+    p0.fillColor = RED;
+    redrawCanvas();
 
-    let idx = start - 1;
-    for(let i = start; i < end; i++)
+    //########################
+
+    // calculate angle with p0
+    let values = [];
+    for(let i = 0; i < n; i++)
     {
-        if(points[i][1] <= pivot)
+        if(i == min) 
+            values.push(0);
+        else
         {
-            idx++
-            [points[i], points[idx]] = [points[idx], points[i]];
-        }
+            const p = points[i];
+            let val = crossNorm(p0, p01, p);
+            if(p.x < p0.x)
+            val = 2 - val; // angle > 90 deg
+            values.push(val);
+        }   
     }
 
-    [points[idx], points[start]] = [points[start], points[idx]];
-    return idx;
+    // sort points on angle with p0
+    quicksort(points, values, 0, n);
+
+    //###################
+    canvas.points = points;
+    for(let i = 0; i < n; i++)
+    {
+        points[i].fillColor = sortingColor(0, n, i);
+        points[i].borderColor = sortingColor(0, n, i);
+        redrawCanvas();
+        await new Promise((resolve, reject) => setTimeout(resolve, interval/3));
+    }
+    //#####################
+
+
+    // graham's scan: add new point to convex hull if angle with previous points not greater than 180 deg
+    //                delete second last point otherwise
+    let hull = [p0, points[1]];
+    let m, p1, p2, p3;
+    let i = 2;
+
+
+    //#######################
+    p0.fillColor = GREEN;
+    points[1].fillColor = GREEN;
+    points[1].borderColor = GREEN;
+    let line1 = new Line(p0, points[1]);
+    canvas.lines.push(line1);
+    redrawCanvas();
+    await new Promise((resolve, reject) => setTimeout(resolve, interval));
+    //#######################
+
+    while(i < n)
+    {
+        m = hull.length;
+        p1 = hull[m-2];
+        p2 = hull[m-1];
+        p3 = points[i];
+
+        //#######################
+        p2.fillColor = BLUE;
+        p2.borderColor = BLUE;
+        let line = new Line(p2, p3, undefined, BLUE);
+        canvas.lines.push(line);
+        redrawCanvas();
+        await new Promise((resolve, reject) => setTimeout(resolve, interval));
+        //#######################
+     
+        if(cross(p2, p3, p1) < 0)
+        {
+            //##########################
+            p2.fillColor = RED;
+            p2.borderColor = RED;
+            canvas.lines[canvas.lines.length-1].color = RED;
+            canvas.lines[canvas.lines.length-2].color = RED;
+            redrawCanvas();
+
+            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+
+            canvas.lines.pop();
+            canvas.lines.pop();
+
+            redrawCanvas();
+            //##########################
+
+            hull.pop();
+        }
+        else
+        {
+            //##########################
+            p2.fillColor = GREEN;
+            p2.borderColor = GREEN;
+            canvas.lines[canvas.lines.length-1].color = BLACK;
+            p3.fillColor = GREEN;
+            p3.borderColor = GREEN;
+            redrawCanvas();
+            //##########################
+
+            hull.push(p3);
+            i++;
+        }
+
+        //#############
+        await new Promise((resolve, reject) => setTimeout(resolve, interval));
+        //#############
+    }
+
+    // close hull
+    let closed = new Line(hull[hull.length-1], p0);
+    canvas.lines.push(closed);
+
+    //###################
+    p0.borderColor = GREEN;
+    redrawCanvas();
+    await new Promise((resolve, reject) => setTimeout(resolve, 3*interval));
+
+    // redraw and fill hull
+    clearCanvas();
+    const hullPolygon = new Polygon(hull, false, 0, LIGHT_GREEN, LIGHT_GREEN);
+    canvas.points = points;
+    canvas.polygons.push(hullPolygon);
+    redrawCanvas();
+    //####################
 }
