@@ -36,10 +36,13 @@ class Polygon
 
 class Canvas
 {
-    constructor(points, lines, polygons)
+    constructor(points, lines, polygons, sweeplines)
     {
         this.points = points;
         this.lines = lines;
         this.polygons = polygons;
+        // sweeplines are single float values 
+        // representing the y value of the horzontal sweepline.
+        this.sweeplines = sweeplines;
     }
 }

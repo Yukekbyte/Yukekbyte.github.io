@@ -6,10 +6,10 @@ function intersections(lines)
     let points = [];
     for(const line of lines) {points.push(line.p1); points.push(line.p2);}
     let values = [];
-    for(const p of points) {values.push(p.y);}
+    for(const p of points) {values.push(-p.y);}
     const getLine = initGetLine(lines);
 
-    // sort points on y-co
+    // sort points on y-co (reversed)
     quicksort(points, values, 0, 2*n);
 
     // sweep line while keeping an active set of lines
@@ -35,9 +35,107 @@ function intersections(lines)
     return intersections;
 }
 
-function animateIntersections(lines)
+async function animateIntersections(lines, interval)
 {
+    //#############
+    // draw initial lines
+    canvas.lines = lines;
+    resetLines();
+    redrawCanvas();
+    //#############
+    
+    // initialize needed data
+    const n = lines.length;
+    let points = [];
+    for(const line of lines) {points.push(line.p1); points.push(line.p2);}
+    let values = [];
+    for(const p of points) {values.push(-p.y);}
+    const getLine = initGetLine(lines);
 
+    // sort points on y-co (reversed)
+    quicksort(points, values, 0, 2*n);
+
+    //###################
+    //for(let i = 0; i < n; i++)
+    //{
+    //    lines[i].color = sortingColor(0, n, i);
+    //    redrawCanvas();
+    //    await new Promise((resolve, reject) => setTimeout(resolve, interval/3));
+    //}
+    //###################
+
+    // sweep line while keeping an active set of lines
+    let intersections = [];
+    let active = new Set();
+    for(const p of points)
+    {
+        //##############
+        // horizontal sweep line
+        canvas.sweeplines = [p.y];
+        //##############
+
+        const line = getLine[10000*p.x + p.y];
+
+        if(active.has(line))
+        {
+            //################
+            line.color = BLACK;
+            redrawCanvas();
+            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            //################
+
+            active.delete(line);
+        }
+        else
+        {
+            //################
+            line.color = GREEN;
+            redrawCanvas();
+            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            //################
+
+            // calc intersection
+            for(const line2 of active)
+            {
+                //################
+                line2.color = LIGHT_GREEN;
+                redrawCanvas();
+                await new Promise((resolve, reject) => setTimeout(resolve, interval));
+                //################
+
+                if(intersect(line, line2))
+                {
+                    intersections.push(intersection(line, line2));
+
+                    //################
+                    const inter = intersections[intersections.length-1];
+                    inter.fillColor = BLUE;
+                    inter.borderColor = BLUE;
+                    inter.radius *= 0.75;
+                    canvas.points.push(inter);
+                    redrawCanvas();
+                    await new Promise((resolve, reject) => setTimeout(resolve, interval));
+                    //################
+                }
+                
+                //################
+                line2.color = RED;
+                //################
+            }
+            // activate line
+            active.add(line);
+
+            //################
+            line.color = RED;
+            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            //################
+        }
+    }
+
+    canvas.sweeplines = [];
+    redrawCanvas();
+
+    return intersections;
 }
 
 // returns true if line1 and line2 intersect.

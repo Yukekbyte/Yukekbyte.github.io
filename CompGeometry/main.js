@@ -9,7 +9,7 @@ window.onload = function()
 {
     // initialise canvas elements
         // internal data struct
-    canvas = new Canvas([], [], []);
+    canvas = new Canvas([], [], [], []);
         // html
     document.getElementById("mainCanvas").innerHTML = `<canvas id=\"canvas\" width=\"${CANVAS_WIDTH}\" height=\"${CANVAS_HEIGHT}\" style=\"border: 10px solid ${BLACK}\"></canvas>`;
         // html elements
@@ -178,6 +178,18 @@ function drawPolygon(polygon)
             drawPoint(p);
 }
 
+function drawSweepLine(sweepline)
+{
+    ctx.beginPath();
+    ctx.moveTo(0, sweepline);
+    ctx.lineTo(CANVAS_WIDTH, sweepline);
+    ctx.closePath();
+
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = TRANSP_BLUE;
+    ctx.stroke();
+}
+
 function drawCanvas()
 {
     for(const polygon of canvas.polygons)
@@ -193,6 +205,10 @@ function drawCanvas()
     for(const point of canvas.points)
     {
         drawPoint(point);
+    }
+    for(const sweepline of canvas.sweeplines)
+    {
+        drawSweepLine(sweepline);
     }
 }
 
@@ -211,9 +227,22 @@ function resetPoints()
         points[i] = new Point(points[i].x, points[i].y);
 }
 
+// Makes all lines on canvas, back to default color, size, ...
+// Only keeps x, y coordinates of points.
+function resetLines()
+{
+    let lines = canvas.lines;
+    for(let i = 0; i < lines.length; i++)
+    {
+        const p1 = new Point(lines[i].p1.x, lines[i].p1.y);
+        const p2 = new Point(lines[i].p2.x, lines[i].p2.y);
+        lines[i] = new Line(p1, p2);
+    }
+}
+
 function clearCanvas()
 {
-    canvas = new Canvas([], [], []);
+    canvas = new Canvas([], [], [], []);
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
@@ -232,7 +261,7 @@ function generateAlgorithm(animate, useCanvas)
             generateConvexHull(animate, useCanvas);
             break;
         case LIS:
-            generateIntersections(false, useCanvas);
+            generateIntersections(animate, useCanvas);
             break;
         case ART:
             generateConvexHull(animate, useCanvas);

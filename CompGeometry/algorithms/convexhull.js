@@ -59,8 +59,6 @@ async function animateConvexHull(points, interval)
     canvas.points = points;
     resetPoints();
     redrawCanvas();
-    // keep track of timeout count
-    let k = 0;
     //#######################
 
     // find lowest point

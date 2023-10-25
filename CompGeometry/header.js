@@ -10,6 +10,7 @@ const GREEN = "#27B327";
 const BLACK = "#000000";
 const WHITE = "#FFFFFF";
 const LIGHT_GREEN = "#54d16d";
+const TRANSP_BLUE = "rgba(0, 117, 255, 0.5)";
 
 // algorithm identifiers
 const CXH = 0;
