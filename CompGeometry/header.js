@@ -1,7 +1,7 @@
 // settings
 const SPEED = [0.5, 1, 3, 10, 25];
 const CANVAS_WIDTH = 1000;
-const CANVAS_HEIGHT = 800;
+const CANVAS_HEIGHT = 630;
 
 // colors
 const RED = "#FF0000";
@@ -43,6 +43,25 @@ const INFO = ["<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Convex Hu
     "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Fortress Problem</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>"];
+
+//timeout keeper
+const TIMEOUTS = {
+    timeouts: [],
+    setTimeout: function(fn, delay) {
+        const id = setTimeout(fn, delay);
+        this.timeouts.push(id);
+    },
+    clearAllTimeouts: function() {
+        while (this.timeouts.length) {
+            clearTimeout(this.timeouts.pop())
+        }
+    }
+}
+
+function delay(ms)
+{
+    return new Promise((resolve, reject) => TIMEOUTS.setTimeout(resolve, ms));
+}
 
 function sortingColor(min, max, val)
 {

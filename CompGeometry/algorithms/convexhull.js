@@ -32,9 +32,9 @@ function convexHull(points)
 
     // graham's scan: add new point to convex hull if angle with previous points not greater than 180 deg
     //                delete second last point otherwise
-    let hull = [p0, points[1]];
+    let hull = [points[0], points[1]];
     let m, p1, p2, p3;
-    let i = 1;
+    let i = 2;
     while(i < n)
     { 
         m = hull.length;
@@ -72,7 +72,6 @@ async function animateConvexHull(points, interval)
     const p01 = new Point(p0.x+100,p0.y);
 
     //########################
-    // draw line through p0
     p0.borderColor = RED;
     p0.fillColor = RED;
     redrawCanvas();
@@ -104,27 +103,28 @@ async function animateConvexHull(points, interval)
     {
         points[i].fillColor = sortingColor(0, n, i);
         points[i].borderColor = sortingColor(0, n, i);
-        redrawCanvas();
-        await new Promise((resolve, reject) => setTimeout(resolve, interval/3));
+        selectPoint(points[i], true);
+        await delay(interval/3);
     }
     //#####################
 
 
     // graham's scan: add new point to convex hull if angle with previous points not greater than 180 deg
     //                delete second last point otherwise
-    let hull = [p0, points[1]];
+    let hull = [points[0], points[1]];
     let m, p1, p2, p3;
     let i = 2;
 
 
     //#######################
     p0.fillColor = GREEN;
+    p0.borderColor = GREEN;
     points[1].fillColor = GREEN;
     points[1].borderColor = GREEN;
     let line1 = new Line(p0, points[1]);
     canvas.lines.push(line1);
     redrawCanvas();
-    await new Promise((resolve, reject) => setTimeout(resolve, interval));
+    await delay(interval);
     //#######################
 
     while(i < n)
@@ -140,7 +140,7 @@ async function animateConvexHull(points, interval)
         let line = new Line(p2, p3, undefined, BLUE);
         canvas.lines.push(line);
         redrawCanvas();
-        await new Promise((resolve, reject) => setTimeout(resolve, interval));
+        await delay(interval);
         //#######################
      
         if(cross(p2, p3, p1) < 0)
@@ -152,10 +152,11 @@ async function animateConvexHull(points, interval)
             canvas.lines[canvas.lines.length-2].color = RED;
             redrawCanvas();
 
-            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            await delay(interval);
 
             canvas.lines.pop();
             canvas.lines.pop();
+            selectPoint(p2, false);
 
             redrawCanvas();
             //##########################
@@ -170,6 +171,7 @@ async function animateConvexHull(points, interval)
             canvas.lines[canvas.lines.length-1].color = BLACK;
             p3.fillColor = GREEN;
             p3.borderColor = GREEN;
+            selectPoint(p3, true);
             redrawCanvas();
             //##########################
 
@@ -178,7 +180,7 @@ async function animateConvexHull(points, interval)
         }
 
         //#############
-        await new Promise((resolve, reject) => setTimeout(resolve, interval));
+        await delay(interval);
         //#############
     }
 
@@ -188,8 +190,8 @@ async function animateConvexHull(points, interval)
 
     //###################
     p0.borderColor = GREEN;
-    redrawCanvas();
-    await new Promise((resolve, reject) => setTimeout(resolve, 3*interval));
+    selectPoint(p0, true);
+    await delay(3*interval);
 
     // redraw and fill hull
     clearCanvas();

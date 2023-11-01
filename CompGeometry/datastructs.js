@@ -26,7 +26,7 @@ class Polygon
 {
     constructor(points, pointsVisible=true, borderWidth=7, borderColor=BLACK, fillColor=WHITE)
     {
-        this.points = points;
+        this.points = points; // CONVENTION: points are ordered counter-clockwise! Things WILL break if this isn't the case...
         this.borderWidth = borderWidth;
         this.borderColor = borderColor;
         this.fillColor = fillColor;

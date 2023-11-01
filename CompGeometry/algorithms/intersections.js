@@ -72,6 +72,8 @@ async function animateIntersections(lines, interval)
         //##############
         // horizontal sweep line
         canvas.sweeplines = [p.y];
+        selectPoint(p, true);
+        await delay(interval);
         //##############
 
         const line = getLine[10000*p.x + p.y];
@@ -81,7 +83,7 @@ async function animateIntersections(lines, interval)
             //################
             line.color = BLACK;
             redrawCanvas();
-            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            await delay(interval);
             //################
 
             active.delete(line);
@@ -89,18 +91,18 @@ async function animateIntersections(lines, interval)
         else
         {
             //################
-            line.color = GREEN;
+            line.color = RED;
             redrawCanvas();
-            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            await delay(interval);
             //################
 
             // calc intersection
             for(const line2 of active)
             {
                 //################
-                line2.color = LIGHT_GREEN;
+                line2.color = RED;
                 redrawCanvas();
-                await new Promise((resolve, reject) => setTimeout(resolve, interval));
+                await delay(interval);
                 //################
 
                 if(intersect(line, line2))
@@ -109,25 +111,24 @@ async function animateIntersections(lines, interval)
 
                     //################
                     const inter = intersections[intersections.length-1];
-                    inter.fillColor = BLUE;
-                    inter.borderColor = BLUE;
-                    inter.radius *= 0.75;
+                    inter.fillColor = RED;
+                    inter.borderColor = RED;
                     canvas.points.push(inter);
-                    redrawCanvas();
-                    await new Promise((resolve, reject) => setTimeout(resolve, interval));
+                    selectPoint(inter, true);
+                    await delay(interval);
                     //################
                 }
                 
                 //################
-                line2.color = RED;
+                line2.color = GREEN;
                 //################
             }
             // activate line
             active.add(line);
 
             //################
-            line.color = RED;
-            await new Promise((resolve, reject) => setTimeout(resolve, interval));
+            line.color = GREEN;
+            await delay(interval);
             //################
         }
     }

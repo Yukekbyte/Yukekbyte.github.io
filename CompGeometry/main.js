@@ -29,6 +29,12 @@ window.onload = function()
     infoDiv.innerHTML = INFO[algorithm];
 }
 
+//==========================
+//==========================
+//     USER INTERFACE
+//==========================
+//==========================
+
 function changeAlgorithm(id)
 {
     // update button style
@@ -127,6 +133,12 @@ function enableRegenerate()
     button.disabled = false;
 }
 
+//++++++++++++++++++++++++++
+//++++++++++++++++++++++++++
+//     CANVAS DRAWING
+//++++++++++++++++++++++++++
+//++++++++++++++++++++++++++
+
 function drawPoint(p)
 {
     ctx.beginPath();
@@ -140,6 +152,43 @@ function drawPoint(p)
     ctx.stroke();
 }
 
+async function selectPoint(p, select)
+{
+    // point must be in canvas to be animated
+    if(!canvas.points.includes(p))
+        canvas.points.push(p);
+
+    // configurable parameters
+    const enlarge_ms = 100;
+    const shrink_ms = 200;
+    const redraws_per_second = 30;
+    const size_factor = 2;
+
+    // derivable parameters
+    let factor = select ? size_factor : 1/size_factor;
+    const ms_between_redraws = 1000/redraws_per_second;
+    let enlarge_increment = ((factor-1) * p.radius) * (ms_between_redraws/enlarge_ms);
+    let shrink_increment = -((factor-1) * p.radius) * (ms_between_redraws/shrink_ms);
+    
+
+    let id;
+    // size UP
+    id = setInterval(sizePoint, ms_between_redraws, p, enlarge_increment);
+    await new Promise((resolve, reject) => setTimeout(resolve, enlarge_ms));
+    clearInterval(id);
+    
+    // size DOWN
+    id = setInterval(sizePoint, ms_between_redraws, p, shrink_increment);
+    await new Promise((resolve, reject) => setTimeout(resolve, shrink_ms));
+    clearInterval(id);
+}
+
+function sizePoint(p, increment)
+{
+    p.radius += increment;
+    redrawCanvas();
+}
+
 function drawLine(line)
 {
     ctx.beginPath();
@@ -150,6 +199,9 @@ function drawLine(line)
     ctx.lineWidth = line.width;
     ctx.strokeStyle = line.color;
     ctx.stroke();
+
+    drawPoint(line.p1);
+    drawPoint(line.p2);
 }
 
 function drawPolygon(polygon)
@@ -170,6 +222,7 @@ function drawPolygon(polygon)
     // border
     ctx.lineWidth = polygon.borderWidth;
     ctx.strokeStyle = polygon.borderColor;
+    ctx.lineJoin = "round";
     ctx.stroke();
 
     // vertices
@@ -190,8 +243,11 @@ function drawSweepLine(sweepline)
     ctx.stroke();
 }
 
-function drawCanvas()
+// Draws shapes in 'canvas' data structure on screen
+function redrawCanvas()
 {
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
     for(const polygon of canvas.polygons)
     {
         drawPolygon(polygon);
@@ -210,12 +266,6 @@ function drawCanvas()
     {
         drawSweepLine(sweepline);
     }
-}
-
-function redrawCanvas()
-{
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    drawCanvas();
 }
 
 // Makes all points on canvas, back to default color, size, ...
@@ -240,11 +290,20 @@ function resetLines()
     }
 }
 
+// Removes all shapes from canvas,
+// Removes all future planned drawings.
 function clearCanvas()
 {
+    TIMEOUTS.clearAllTimeouts();
     canvas = new Canvas([], [], [], []);
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
+
+//##########################
+//##########################
+//   ALGORITHM GENERATION
+//##########################
+//##########################
 
 // Generate the algorithm that is currently selected.
 function generateAlgorithm(animate, useCanvas)
@@ -255,7 +314,7 @@ function generateAlgorithm(animate, useCanvas)
             generateConvexHull(animate, useCanvas);
             break;
         case TRI:
-            generateConvexHull(animate, useCanvas);
+            generateTriangulate(false, useCanvas);
             break;
         case SUB:
             generateConvexHull(animate, useCanvas);
@@ -282,7 +341,7 @@ function generateConvexHull(animate, useCanvas)
  
     // if we don't use canvas, generate new points.
     if(!useCanvas)
-        points = generateRandomPoints(35);
+        points = generateRandomPoints(30);
 
     if(animate)
         animateConvexHull(points, 1000/speed);
@@ -298,7 +357,7 @@ function generateConvexHull(animate, useCanvas)
         canvas.points = points;
         canvas.polygons.push(hullPolygon);
 
-        drawCanvas();
+        redrawCanvas();
     }
 }
 
@@ -309,7 +368,7 @@ function generateIntersections(animate, useCanvas)
  
     // if we don't use canvas, generate new lines.
     if(!useCanvas)
-        lines = generateRandomLines(20);
+        lines = generateRandomLines(15);
 
     if(animate)
         animateIntersections(lines, 1000/speed);
@@ -323,7 +382,36 @@ function generateIntersections(animate, useCanvas)
         canvas.lines = lines;
         canvas.points = inters;
 
-        drawCanvas();
+        redrawCanvas();
+    }
+}
+
+function generateTriangulate(animate, useCanvas)
+{
+    let polygon;
+    clearCanvas();
+
+    if(canvas.polygons.length > 0 && useCanvas)
+        polygon = canvas.polygons[0];
+    else
+        polygon = generateRandomStarPolygon(10);
+
+    if(animate)
+        animateTriangulate(polygon, 1000/speed);
+    else
+    {
+        const diagonals = split(polygon);
+
+        // color diagonals
+        for(const diag of diagonals) {diag.color = RED;}
+
+        canvas.polygons = [polygon];
+        canvas.lines = diagonals;
+        
+        polygon.borderWidth = 1;
+        polygon.borderColor = BLUE;
+        canvas.polygons = [polygon];
+        redrawCanvas();
     }
 }
 
@@ -347,7 +435,7 @@ function generateRandomPoints(n)
 
 function generateRandomLines(n)
 {
-    const points = generateRandomPoints(2*n);
+    let points = generateRandomPoints(2*n);
 
     let lines = [];
     for(let i = 0; i < 2*n; i+=2)
@@ -355,3 +443,113 @@ function generateRandomLines(n)
 
     return lines;
 }
+
+function generateRandomPolygon(n)
+{
+    let points = generateRandomPoints(n);
+    let polygon = convexHull(points);
+    let interior = points.filter(p => !polygon.includes(p));
+
+    while(interior.length > 0)
+    {
+        let minDist = 9999;
+        let insertIndex;
+        let nearestPoint;
+
+        for(let i = 0; i < polygon.length; i++)
+        {
+            const l = polygon.length;
+            const p1 = polygon[i];
+            const p2 = polygon[(((i+1) % l) + l) % l];
+
+            for(const p of interior)
+            {
+                const currDist = distToSegment(p, p1, p2);
+                if(currDist < minDist && !intersectsPolygon(p, p1, p2, polygon))
+                {
+                    minDist = currDist;
+                    insertIndex = (i+1) % l;
+                    nearestPoint = p;
+                }
+            }
+        }
+
+        interior.splice(interior.indexOf(nearestPoint), 1);
+        polygon.splice(insertIndex, 0, nearestPoint);
+    }
+
+    const poly = new Polygon(polygon, true, 3, LIGHT_GREEN, LIGHT_GREEN);
+    return poly;
+
+    // intersects function
+    function intersectsPolygon(p, p1, p2, polygon)
+    {
+        const n = polygon.length;
+        const newEdge1 = new Line(p, p1);
+        const newEdge2 = new Line(p, p2);
+
+        for(let i = 0; i < n; i++)
+        {
+            const pp1 = polygon[i];
+            const pp2 = polygon[i % n];
+
+            if(pp1 == p1 || pp1 == p2 || pp2 == p1 || pp2 == p2)
+            continue;
+            
+            const edge = new Line(pp1, pp2);
+            if(intersect(edge, newEdge1) || intersect(edge, newEdge2))
+                return true;
+        }
+        return false;
+    }
+
+    // min dist to edge functions from stackoverflow
+    function sqr(x) { return x * x }
+    function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+    function distToSegmentSquared(p, v, w) {
+    var l2 = dist2(v, w);
+    if (l2 == 0) return dist2(p, v);
+    var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return dist2(p, { x: v.x + t * (w.x - v.x),
+                        y: v.y + t * (w.y - v.y) });
+    }
+    function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+}
+
+function generateRandomStarPolygon(n)
+{
+    let points = generateRandomPoints(n);
+
+    // find lowest point
+    let min = 0;
+    for(let i = 1; i < n; i++)
+        if(points[i].y < points[min].y)
+            min = i;
+
+    const p0 = points[min];
+    const p01 = new Point(p0.x+1,p0.y);
+
+    // calculate angle with p0
+    let values = [];
+    for(let i = 0; i < n; i++)
+    {
+        if(i == min) 
+            values.push(0);
+        else
+        {
+            const p = points[i];
+            let val = crossNorm(p0, p01, p);
+            if(p.x < p0.x)
+            val = 2 - val; // angle > 90 deg
+            values.push(val); // sort counter-clockwise
+        }   
+    }
+
+    // sort points on angle with p0
+    quicksort(points, values, 0, n);
+
+    const poly = new Polygon(points, true, 3, LIGHT_GREEN, LIGHT_GREEN);
+    return poly;
+}
+

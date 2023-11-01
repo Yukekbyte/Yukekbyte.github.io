@@ -517,7 +517,6 @@ function drawMazeUpdate(x, y, animated=true, duration=350)
 
 function switchDragToggle(x, y, value)
 {
-    console.log("switching");
     dragToggle = value;
     clickSquare(x, y);
 }
@@ -639,8 +638,6 @@ function calculateRemovedWalls()
 
 function startAnimating(mazeGen)
 {
-    console.log("start generation");
-
     isGenerating = mazeGen;
     isAnimating = true;
     if(mazeGen)
@@ -662,8 +659,6 @@ function stoppedAnimating()
     activateFind();
     isAnimating = false;
     isGenerating = false;
-
-    console.log("stopped generation");
 }
 
 function generateMaze(animate)
