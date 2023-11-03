@@ -1,6 +1,8 @@
 // Graham's Scan Convex Hull algorithm
-function convexHull(points)
+function convexHull(inputPoints)
 {
+    // copy input
+    let points = [...inputPoints];
     // find lowest point
     const n = points.length;
     let min = 0;
@@ -199,5 +201,6 @@ async function animateConvexHull(points, interval)
     canvas.points = points;
     canvas.polygons.push(hullPolygon);
     redrawCanvas();
+    TIMEOUTS.clearAllTimeouts();
     //####################
 }

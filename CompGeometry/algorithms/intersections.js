@@ -133,10 +133,10 @@ async function animateIntersections(lines, interval)
         }
     }
 
+    canvas.points = intersections; // removes points of lines from the canvas (there were only added for animation purposes)
     canvas.sweeplines = [];
     redrawCanvas();
-
-    return intersections;
+    TIMEOUTS.clearAllTimeouts();
 }
 
 // returns true if line1 and line2 intersect.

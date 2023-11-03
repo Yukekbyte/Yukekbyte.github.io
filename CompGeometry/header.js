@@ -10,7 +10,13 @@ const GREEN = "#27B327";
 const BLACK = "#000000";
 const WHITE = "#FFFFFF";
 const LIGHT_GREEN = "#54d16d";
+const LIGHT_BLUE = "#6970fa";
+const LIGHT_RED = "#f56a5b";
+const LIGHT_ORANGE = "#fac269";
+const LIGHT_PURPLE = "#c269fa";
+const LIGHT_ROSE = "#f55be5";
 const TRANSP_BLUE = "rgba(0, 117, 255, 0.5)";
+const TRANSPARENT = "rgba(0, 0, 0, 0)";
 
 // algorithm identifiers
 const CXH = 0;
