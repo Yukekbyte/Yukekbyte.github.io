@@ -16,7 +16,7 @@ window.onload = function()
         // internal canvas data struct
     canvas = new Canvas([], [], [], []);
         // html
-    document.getElementById("mainCanvas").innerHTML = `<canvas id=\"canvas\" width=\"${CANVAS_WIDTH}\" height=\"${CANVAS_HEIGHT}\" style=\"border: 1px solid ${BLACK}\"></canvas>`;
+    document.getElementById("mainCanvas").innerHTML = `<canvas id=\"canvas\" width=\"${CANVAS_WIDTH}\" height=\"${CANVAS_HEIGHT}\" style=\"border: 3px solid ${BLACK}\"></canvas>`;
         // html elements
     canvasElem = document.getElementById("canvas");
     ctx = canvasElem.getContext("2d");
@@ -429,6 +429,24 @@ function resetLines()
     }
 }
 
+// Makes all polygons on canvas, back to default color, size, ...
+// Only keeps x, y coordinates of points in polygon.
+function resetPolygons()
+{
+    let polygons = canvas.polygons;
+    for(let i = 0; i < polygons.length; i++)
+    {
+        const polygon = polygons[i];
+
+        for(let j = 0; j < polygon.points.length; j++)
+        {
+            const p = new Point(polygon.points[j].x, polygon.points[j].y);
+            polygon.points[j] = p;
+        }
+        polygons[i] = new Polygon(polygon.points);
+    }
+}
+
 // Removes all shapes from canvas,
 // Removes all future planned drawings.
 function clearCanvas()
@@ -453,7 +471,7 @@ function generateAlgorithm(animate)
             generateConvexHull(animate);
             break;
         case TRI:
-            generateTriangulate(false);
+            generateTriangulate(animate);
             break;
         case SUB:
             generateConvexHull(animate);
@@ -519,7 +537,7 @@ function generateTriangulate(animate)
         animateTriangulate(polygon, 1000/speed);
     else
     {
-        const [monotones, diagonals] = triangulate(polygon);
+        const [monotones, hardDiagonals, diagonals] = triangulate(polygon);
 
         // color monotones
         let colors = [LIGHT_GREEN, LIGHT_RED, LIGHT_BLUE, LIGHT_PURPLE, LIGHT_ORANGE, LIGHT_ROSE];
@@ -533,11 +551,18 @@ function generateTriangulate(animate)
             monotone.pointsVisible = false;
         }
 
+        for(let i = 0; i < hardDiagonals.length; i++)
+        {
+            const diagonal = hardDiagonals[i];
+            diagonal.width = 5;
+            diagonal.color = BLACK;
+        }
+
         for(let i = 0; i < diagonals.length; i++)
         {
             const diagonal = diagonals[i];
-            diagonal.width = 3;
-            diagonal.color = RED;
+            diagonal.width = 2;
+            diagonal.color = BLACK;
         }
 
         // make base polygon transparent
@@ -549,7 +574,8 @@ function generateTriangulate(animate)
         canvas.polygons = [polygon]; // base polygon goes first (for dragging points functionality)
         canvas.polygons.push(...monotones);
         // diagonals on canvas
-        canvas.lines = diagonals;
+        canvas.lines = hardDiagonals;
+        canvas.lines.push(...diagonals);
 
         redrawCanvas();
     }
@@ -628,11 +654,14 @@ function generateRandomPolygon()
 
     `{"points":[{"x":250.35053361782258,"y":50.81879110928179,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":310.5832674586085,"y":117.46967328064332,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":378.4232258878111,"y":154.26054731111353,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":382.2838236186178,"y":247.62730842841142,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":453.86057535588304,"y":200.60242767560976,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":432.6575558585931,"y":48.784471026227834,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":564.6886605596402,"y":64.52224931284297,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":645.4012467818943,"y":116.46339683452257,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":748.7672692074541,"y":47.10952337633853,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":897.173760835564,"y":43.05926503166762,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":963.7036698710622,"y":236.12502224464856,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":961.1405600526981,"y":499.8818697098144,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":841.9734016114011,"y":571.4572978274311,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":659.4862602699417,"y":530.8171241438633,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":798.9035862385871,"y":408.0555113511965,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":830.8055157888707,"y":264.3458484505048,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":706.8069533735718,"y":205.89939062072784,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":560.228097994121,"y":452.981116696272,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":365.5236176476529,"y":574.4893613733875,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":211.6721445180201,"y":566.6699845228086,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":303.3538810923635,"y":483.17812132310746,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":379.95964975159933,"y":377.9192419791234,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":326.09087398778536,"y":295.1379161219965,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":174.18296343757925,"y":431.94826055875444,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":66.77822575722547,"y":376.5946807021289,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":172.05907872351207,"y":298.5077775736707,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":183.81204710258675,"y":216.80230526696153,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":87.35364497503313,"y":110.86269615189076,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":137.97707869019183,"y":41.62111864496703,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":234.26873172973472,"y":127.83567982895292,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}],"borderWidth":3,"borderColor":"#54d16d","fillColor":"#54d16d","pointsVisible":true}`,
 
-    `{"points":[{"x":196.35053361782258,"y":38.81879110928179,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":261.5832674586085,"y":101.46967328064332,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":268.4232258878111,"y":208.26054731111353,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":396.2838236186178,"y":37.627308428411425,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":510.86057535588304,"y":68.60242767560976,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":629.6575558585931,"y":139.78447102622783,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":778.6886605596402,"y":42.52224931284297,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":937.4012467818943,"y":109.46339683452257,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":989.7672692074541,"y":286.10952337633853,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":985.173760835564,"y":483.0592650316676,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":891.7036698710622,"y":561.1250222446486,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":797.1405600526981,"y":588.8818697098144,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":700.9734016114011,"y":582.4572978274311,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":722.4862602699417,"y":466.81712414386334,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":776.9035862385871,"y":415.0555113511965,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":871.8055157888707,"y":447.3458484505048,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":859.8069533735718,"y":303.89939062072784,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":762.228097994121,"y":210.981116696272,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":556.5236176476528,"y":240.4893613733875,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":399.6721445180201,"y":319.6699845228086,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":410.3538810923635,"y":448.17812132310746,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":344.95964975159933,"y":528.9192419791234,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":234.09087398778536,"y":514.1379161219966,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":128.18296343757925,"y":597.9482605587544,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":91.77822575722547,"y":465.5946807021289,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":229.05907872351207,"y":318.5077775736707,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":142.81204710258675,"y":277.8023052669615,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":59.353644975033134,"y":290.86269615189076,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":27.97707869019183,"y":151.62111864496703,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":114.26873172973472,"y":15.83567982895292,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}],"borderWidth":3,"borderColor":"#54d16d","fillColor":"#54d16d","pointsVisible":true}`];
+    `{"points":[{"x":196.35053361782258,"y":38.81879110928179,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":261.5832674586085,"y":101.46967328064332,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":268.4232258878111,"y":208.26054731111353,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":396.2838236186178,"y":37.627308428411425,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":510.86057535588304,"y":68.60242767560976,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":629.6575558585931,"y":139.78447102622783,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":778.6886605596402,"y":42.52224931284297,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":937.4012467818943,"y":109.46339683452257,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":989.7672692074541,"y":286.10952337633853,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":985.173760835564,"y":483.0592650316676,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":891.7036698710622,"y":561.1250222446486,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":797.1405600526981,"y":588.8818697098144,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":700.9734016114011,"y":582.4572978274311,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":722.4862602699417,"y":466.81712414386334,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":776.9035862385871,"y":415.0555113511965,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":871.8055157888707,"y":447.3458484505048,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":859.8069533735718,"y":303.89939062072784,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":762.228097994121,"y":210.981116696272,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":556.5236176476528,"y":240.4893613733875,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":399.6721445180201,"y":319.6699845228086,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":410.3538810923635,"y":448.17812132310746,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":344.95964975159933,"y":528.9192419791234,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":234.09087398778536,"y":514.1379161219966,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":128.18296343757925,"y":597.9482605587544,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":91.77822575722547,"y":465.5946807021289,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":229.05907872351207,"y":318.5077775736707,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":142.81204710258675,"y":277.8023052669615,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":59.353644975033134,"y":290.86269615189076,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":27.97707869019183,"y":151.62111864496703,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":114.26873172973472,"y":15.83567982895292,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}],"borderWidth":3,"borderColor":"#54d16d","fillColor":"#54d16d","pointsVisible":true}`,
+
+    `{"points":[{"x":200,"y":100,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":713,"y":188,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":634,"y":420,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":428,"y":513,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":268,"y":293,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}],"borderWidth":0,"borderColor":"#54d16d","fillColor":"#54d16d","pointsVisible":true}`];
 
     const i = Math.floor(Math.random()*storedPolygonsInString.length);
 
     return JSON.parse(storedPolygonsInString[i]);
+    //return new Polygon([new Point(200, 100), new Point(600, 320), new Point(550, 500), new Point(400, 350), new Point(300, 250)], true, 0, LIGHT_GREEN, LIGHT_GREEN);
 }
 
 function generateRandomStarPolygon(n)

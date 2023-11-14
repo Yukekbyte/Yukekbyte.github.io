@@ -5,8 +5,12 @@ const CANVAS_HEIGHT = 630;
 
 // colors
 const RED = "#FF0000";
-const BLUE = "#6997E0";
+const BLUE = "#007bff";
 const GREEN = "#27B327";
+const LIME = "#6fff00";
+const ORANGE = "#ff9d00";
+const PURPLE = "#9b34eb";
+const YELLOW = "#ffff00";
 const BLACK = "#000000";
 const WHITE = "#FFFFFF";
 const LIGHT_GREEN = "#54d16d";
@@ -15,7 +19,8 @@ const LIGHT_RED = "#f56a5b";
 const LIGHT_ORANGE = "#fac269";
 const LIGHT_PURPLE = "#c269fa";
 const LIGHT_ROSE = "#f55be5";
-const TRANSP_BLUE = "rgba(0, 117, 255, 0.5)";
+const LIGHT_TEAL = "#56fcf1";
+const TRANSP_BLUE = "rgba(0, 117, 255, 0.15)";
 const TRANSPARENT = "rgba(0, 0, 0, 0)";
 
 // algorithm identifiers
