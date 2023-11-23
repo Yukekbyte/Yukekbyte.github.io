@@ -1,7 +1,7 @@
 :root {
-    --foreground: rgb(111, 121, 224);
-    --background: rgb(34, 43, 145);
-    --background-darker: rgb(149, 149, 149);
+    --foreground: rgb(156, 163, 241);
+    --background: rgb(76, 87, 207);
+    --background-darker: rgb(190, 190, 190);
 }
 
 a {

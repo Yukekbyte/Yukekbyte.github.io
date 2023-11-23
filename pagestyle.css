@@ -8,6 +8,8 @@ body {
     background-color: white;
     font-size: 22px;
     font-family: sans-serif;
+
+    overflow-x: visible;
 }
 
 #outer {
@@ -53,7 +55,7 @@ body {
     display: inline-flex;
     justify-content: flex-start;
 
-    overflow-x: visible;
+
 }
 
 #inner-left, #inner-right {

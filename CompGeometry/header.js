@@ -1,6 +1,6 @@
 // settings
 const SPEED = [0.5, 1, 3, 10, 25];
-const CANVAS_WIDTH = 1000;
+const CANVAS_WIDTH = 950;
 const CANVAS_HEIGHT = 630;
 
 // colors

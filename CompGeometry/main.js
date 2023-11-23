@@ -5,10 +5,6 @@ var algorithm = CXH; // algorithm selected
 var canvasAlgorithm = CXH; // (input for) algorithm currently on canvas.
 var hasGenerated = false; // the output of algorithm is drawn on canvas.
 var speed = SPEED[2];
-var offsetX;
-var offsetY;
-var scrollX;
-var scrollY;
 
 window.onload = function()
 {
@@ -22,17 +18,11 @@ window.onload = function()
     ctx = canvasElem.getContext("2d");
     ctx.translate(0, canvasElem.height);
     ctx.scale(1, -1);
-        // -- for dragging of points on canvas --
-    offsetX = canvasElem.offsetLeft;
-    offsetY = canvasElem.offsetTop;
-    scrollX = canvasElem.scrollLeft;
-    scrollY = canvasElem.scrollTop;
         // listen for mouse events
     canvasElem.onmousedown = function(e){handleMouseDown(e);};
     canvasElem.onmousemove = function(e){handleMouseMove(e);};
     canvasElem.onmouseup = function(e){handleMouseUp(e);};
     canvasElem.onmouseout = function(e){handleMouseOut(e);};
-        // ----
 
     // first config
     pressedAlgorithm("CXH-button");
@@ -159,6 +149,11 @@ function enableGenerate()
     // and then move the point by that distance
 var startX;
 var startY;
+    // variables to save canvas and scroll offsets
+var offsetX;
+var offsetY;
+var scrollX;
+var scrollY;
 
     // holds intex of selected point
 var selectedPoint = -1;
@@ -167,7 +162,7 @@ var selectedLine = -1;
 
 function pointHittest(x, y, p)
 {
-    return (p.x-x)*(p.x-x)+(p.y-y)*(p.y-y) <= 4*p.radius*p.radius; // buffer coefficient for easy selection
+    return (p.x-x+p.radius)*(p.x-x+p.radius)+(p.y-y-p.radius)*(p.y-y-p.radius) <= 4*p.radius*p.radius; // buffer coefficient for easy selection
 }
 
 function handleMouseDown(e)
@@ -176,9 +171,16 @@ function handleMouseDown(e)
     if(TIMEOUTS.timeouts.length > 0)
         return;
 
+    offsetX = canvasElem.offsetLeft;
+    offsetY = canvasElem.offsetTop;
+    scrollX = document.documentElement.scrollLeft;
+    scrollY = document.documentElement.scrollTop;
+
+    console.log(`offset (${offsetX}, ${offsetY}) | scroll (${scrollX}, ${scrollY})`);
+
     e.preventDefault();
-    startX = parseInt(e.clientX - offsetX);
-    startY = parseInt(-e.clientY + offsetY + CANVAS_HEIGHT); // because canvas origin is bottomleft instead of bottomright
+    startX = parseInt(e.clientX - offsetX + scrollX);
+    startY = parseInt(-e.clientY + offsetY + CANVAS_HEIGHT - scrollY); // because canvas origin is bottomleft instead of bottomright
 
     // points
     for(let i = 0; i < canvas.points.length; i++)
@@ -222,8 +224,8 @@ function handleMouseMove(e)
         return;
 
     e.preventDefault();
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(-e.clientY + offsetY + CANVAS_HEIGHT); // because canvas origin is bottomleft instead of bottomright
+    mouseX = parseInt(e.clientX - offsetX + scrollX);
+    mouseY = parseInt(-e.clientY + offsetY + CANVAS_HEIGHT - scrollY); // because canvas origin is bottomleft instead of bottomright
 
     let dx = mouseX - startX;
     let dy = mouseY - startY;
@@ -385,6 +387,8 @@ function drawSweepLine(sweepline)
 function redrawCanvas()
 {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     for(const polygon of canvas.polygons.reverse()) // draw polygons in reversed order
     {

@@ -1,7 +1,7 @@
 :root {
-    --foreground: rgb(219, 219, 116);
-    --background: rgb(184, 186, 53);
-    --background-darker: rgb(127, 129, 33);;
+    --foreground: #ffe169; /* Lighter yellow */
+    --background: #dbb42c; /* Medium yellow */
+    --background-darker: #a47e1b; /* Darker yellow */
 }
 
 #inner-left {
