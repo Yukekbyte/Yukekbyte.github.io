@@ -53,14 +53,14 @@ function changeAlgorithm(id)
         case "CXH-button":
             algorithm = CXH;
             break;
+        case "CH2-button":
+            algorithm = CH2;
+            break;
         case "LIS-button":
             algorithm = LIS;
             break;
         case "TRI-button":
             algorithm = TRI;
-            break;
-        case "SUB-button":
-            algorithm = SUB;
             break;
         case "ART-button":
             algorithm = ART;
@@ -108,9 +108,9 @@ function changeSpeed(id)
 function pressedAlgorithm(id)
 {
     document.getElementById("CXH-button").classList.remove("button-outer-active");
+    document.getElementById("CH2-button").classList.remove("button-outer-active");
     document.getElementById("LIS-button").classList.remove("button-outer-active");
     document.getElementById("TRI-button").classList.remove("button-outer-active");
-    document.getElementById("SUB-button").classList.remove("button-outer-active");
     document.getElementById("ART-button").classList.remove("button-outer-active");
     document.getElementById("FTS-button").classList.remove("button-outer-active");
     document.getElementById(id).classList.add("button-outer-active");
@@ -387,7 +387,7 @@ function drawSweepLine(sweepline)
 function redrawCanvas()
 {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "#303030";
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     for(const polygon of canvas.polygons.reverse()) // draw polygons in reversed order
@@ -474,11 +474,11 @@ function generateAlgorithm(animate)
         case CXH:
             generateConvexHull(animate);
             break;
+        case CH2:
+            generateConvexHull2(false);
+            break;
         case TRI:
             generateTriangulate(animate);
-            break;
-        case SUB:
-            generateConvexHull(animate);
             break;
         case LIS:
             generateIntersections(animate);
@@ -504,9 +504,29 @@ function generateConvexHull(animate)
     else
     {
         const hull = convexHull(points);
-        const hullPolygon = new Polygon(hull, false, 0, LIGHT_GREEN, LIGHT_GREEN);
+        const hullPolygon = new Polygon(hull, false);
         for(const p of points) {p.fillColor = RED; p.borderColor = RED;}
-        for(const p of hull) {p.fillColor = GREEN; p.borderColor = GREEN;}
+        for(const p of hull) {p.fillColor = LIGHT_GREEN; p.borderColor = LIGHT_GREEN;}
+
+        canvas.points = points;
+        canvas.polygons.push(hullPolygon);
+        redrawCanvas();
+    }
+}
+
+function generateConvexHull2(animate)
+{
+    let points = canvas.points;
+    clearCanvas();
+
+    if(animate)
+        animateConvexHull2(points, 1000/speed);
+    else
+    {
+        const hull = convexHull2(points);
+        const hullPolygon = new Polygon(hull, false);
+        for(const p of points) {p.fillColor = RED; p.borderColor = RED;}
+        for(const p of hull) {p.fillColor = LIGHT_GREEN; p.borderColor = LIGHT_GREEN;}
 
         canvas.points = points;
         canvas.polygons.push(hullPolygon);
@@ -600,11 +620,11 @@ function generateRandomInput()
         case CXH:
             canvas.points = generateRandomPoints(15);
             break;
+        case CH2:
+            canvas.points = generateRandomPoints(15);
+            break;
         case TRI:
             canvas.polygons = [generateRandomPolygon()];
-            break;
-        case SUB:
-            canvas.points = generateRandomPoints(15);
             break;
         case LIS:
             canvas.lines = generateRandomLines(12);

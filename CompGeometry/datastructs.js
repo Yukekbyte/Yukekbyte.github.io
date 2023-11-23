@@ -13,7 +13,7 @@ class Point
 
 class Line
 {
-    constructor(p1, p2, width=7, color=BLACK)
+    constructor(p1, p2, width=5, color=BLACK)
     {
         this.p1 = p1;
         this.p2 = p2;
@@ -24,7 +24,7 @@ class Line
 
 class Polygon
 {
-    constructor(points, pointsVisible=true, borderWidth=1, borderColor=LIGHT_GREEN, fillColor=LIGHT_GREEN)
+    constructor(points, pointsVisible=true, borderWidth=4, borderColor=LIGHT_GREEN, fillColor=TRANSP_LIGHT_GREEN)
     {
         this.points = points; // CONVENTION: points are ordered counter-clockwise! Things WILL break if this isn't the case...
         this.borderWidth = borderWidth;

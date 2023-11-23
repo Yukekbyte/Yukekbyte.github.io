@@ -13,7 +13,8 @@ const PURPLE = "#9b34eb";
 const YELLOW = "#ffff00";
 const BLACK = "#000000";
 const WHITE = "#FFFFFF";
-const LIGHT_GREEN = "#54d16d";
+const LIGHT_GREEN = "rgba(84, 209, 109, 1)";
+const TRANSP_LIGHT_GREEN = "rgba(84, 209, 109, 0.5)";
 const LIGHT_BLUE = "#6970fa";
 const LIGHT_RED = "#f56a5b";
 const LIGHT_ORANGE = "#fac269";
@@ -25,8 +26,8 @@ const TRANSPARENT = "rgba(0, 0, 0, 0)";
 
 // algorithm identifiers
 const CXH = 0;
-const TRI = 1;
-const SUB = 2;
+const CH2 = 1
+const TRI = 2;
 const LIS = 3;
 const ART = 4;
 const FTS = 5;

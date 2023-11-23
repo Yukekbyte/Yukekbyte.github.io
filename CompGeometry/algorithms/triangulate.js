@@ -399,6 +399,7 @@ async function animateTriangulate(polygon, interval)
     // draw initial polygon
     canvas.polygons = [polygon];
     resetPolygons();
+    canvas.polygons[0].fillColor = LIGHT_GREEN;
     redrawCanvas();
     //#######################
 

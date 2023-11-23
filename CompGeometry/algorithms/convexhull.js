@@ -119,10 +119,10 @@ async function animateConvexHull(points, interval)
 
 
     //#######################
-    p0.fillColor = GREEN;
-    p0.borderColor = GREEN;
-    points[1].fillColor = GREEN;
-    points[1].borderColor = GREEN;
+    p0.fillColor = LIGHT_GREEN;
+    p0.borderColor = LIGHT_GREEN;
+    points[1].fillColor = LIGHT_GREEN;
+    points[1].borderColor = LIGHT_GREEN;
     let line1 = new Line(p0, points[1]);
     canvas.lines.push(line1);
     redrawCanvas();
@@ -168,11 +168,11 @@ async function animateConvexHull(points, interval)
         else
         {
             //##########################
-            p2.fillColor = GREEN;
-            p2.borderColor = GREEN;
+            p2.fillColor = LIGHT_GREEN;
+            p2.borderColor = LIGHT_GREEN;
             canvas.lines[canvas.lines.length-1].color = BLACK;
-            p3.fillColor = GREEN;
-            p3.borderColor = GREEN;
+            p3.fillColor = LIGHT_GREEN;
+            p3.borderColor = LIGHT_GREEN;
             selectPoint(p3, true);
             redrawCanvas();
             //##########################
@@ -191,13 +191,13 @@ async function animateConvexHull(points, interval)
     canvas.lines.push(closed);
 
     //###################
-    p0.borderColor = GREEN;
+    p0.borderColor = LIGHT_GREEN;
     selectPoint(p0, true);
     await delay(3*interval);
 
     // redraw and fill hull
     clearCanvas();
-    const hullPolygon = new Polygon(hull, false, 0, LIGHT_GREEN, LIGHT_GREEN);
+    const hullPolygon = new Polygon(hull, false);
     canvas.points = points;
     canvas.polygons.push(hullPolygon);
     redrawCanvas();
