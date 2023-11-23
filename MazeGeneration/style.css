@@ -3,3 +3,12 @@
     --background: rgb(91, 175, 91);
     --background-darker: rgb(56, 104, 56);
 }
+
+table {
+    table-layout: fixed;
+}
+
+th,td {
+    min-width: 20px;
+    min-height: 20px;
+}

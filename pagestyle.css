@@ -52,21 +52,29 @@ body {
 
     display: inline-flex;
     justify-content: flex-start;
+
+    overflow-x: visible;
 }
 
-#inner-left, #inner-middle, #inner-right {
+#inner-left, #inner-right {
     padding: 20px;
 }
 
 #inner-left {
+    min-width: 325px;
     /* display buttons in center
     display: flex;
     align-items: center;
     justify-content: center;*/
 }
 
+#inner-middle {
+    padding: 20px 10px 20px 0px;
+}
+
 #inner-right {
-    width: 750px;
+    width: 100%;
+    min-width: 500px;
 }
 
 h2 {

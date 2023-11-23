@@ -16,7 +16,7 @@ window.onload = function()
         // internal canvas data struct
     canvas = new Canvas([], [], [], []);
         // html
-    document.getElementById("mainCanvas").innerHTML = `<canvas id=\"canvas\" width=\"${CANVAS_WIDTH}\" height=\"${CANVAS_HEIGHT}\" style=\"border: 3px solid ${BLACK}\"></canvas>`;
+    document.getElementById("mainCanvas").innerHTML = `<canvas id=\"canvas\" width=\"${CANVAS_WIDTH}\" height=\"${CANVAS_HEIGHT}\"></canvas>`;
         // html elements
     canvasElem = document.getElementById("canvas");
     ctx = canvasElem.getContext("2d");
