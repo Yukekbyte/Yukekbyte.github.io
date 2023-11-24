@@ -77,7 +77,6 @@ async function animateConvexHull(points, interval)
     p0.borderColor = RED;
     p0.fillColor = RED;
     redrawCanvas();
-
     //########################
 
     // calculate angle with p0

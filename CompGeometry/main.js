@@ -475,7 +475,7 @@ function generateAlgorithm(animate)
             generateConvexHull(animate);
             break;
         case CH2:
-            generateConvexHull2(false);
+            generateConvexHull2(animate);
             break;
         case TRI:
             generateTriangulate(animate);
@@ -621,7 +621,7 @@ function generateRandomInput()
             canvas.points = generateRandomPoints(15);
             break;
         case CH2:
-            canvas.points = generateRandomPoints(15);
+            canvas.points = generateRandomPoints(10);
             break;
         case TRI:
             canvas.polygons = [generateRandomPolygon()];
