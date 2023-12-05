@@ -30,21 +30,21 @@ const CH2 = 1
 const TRI = 2;
 const LIS = 3;
 const ART = 4;
-const FTS = 5;
+const VOR = 5;
 
 const INFO = ["<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Convex Hull (Graham's Scan)</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>",
 
-    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Polygon Triangulation</h2>\
+    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Convex Hull (Jarvis' March)</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>",
 
-    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Planar subdivision</h2>\
+    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Polygon Triagulation</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>",
 
-    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Line intersections</h2>\
+    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Line Intersections</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>",
 
@@ -52,7 +52,7 @@ const INFO = ["<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Convex Hu
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>",
 
-    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Fortress Problem</h2>\
+    "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Voronoi Diagram</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\
     <p>Second paragraph comes here.</p>"];
 

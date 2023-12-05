@@ -154,7 +154,6 @@ async function animateConvexHull2(points, interval)
             {
                 if(!hull.includes(p))
                 {
-                    selectPoint(p, false);
                     p.borderColor = BLACK;
                     p.fillColor = BLACK;
                 }

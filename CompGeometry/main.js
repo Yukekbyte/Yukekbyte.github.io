@@ -65,8 +65,8 @@ function changeAlgorithm(id)
         case "ART-button":
             algorithm = ART;
             break;
-        case "FTS-button":
-            algorithm = FTS;
+        case "VOR-button":
+            algorithm = VOR;
             break;
     }
 
@@ -112,7 +112,7 @@ function pressedAlgorithm(id)
     document.getElementById("LIS-button").classList.remove("button-outer-active");
     document.getElementById("TRI-button").classList.remove("button-outer-active");
     document.getElementById("ART-button").classList.remove("button-outer-active");
-    document.getElementById("FTS-button").classList.remove("button-outer-active");
+    document.getElementById("VOR-button").classList.remove("button-outer-active");
     document.getElementById(id).classList.add("button-outer-active");
 }
 
@@ -310,7 +310,6 @@ async function selectPoint(p, select)
     let enlarge_increment = ((factor-1) * p.radius) * (ms_between_redraws/enlarge_ms);
     let shrink_increment = -((factor-1) * p.radius) * (ms_between_redraws/shrink_ms);
     
-
     let id;
     // size UP
     id = setInterval(sizePoint, ms_between_redraws, p, enlarge_increment);
@@ -486,8 +485,8 @@ function generateAlgorithm(animate)
         case ART:
             generateConvexHull(animate);
             break;
-        case FTS:
-            generateConvexHull(animate);
+        case VOR:
+            generateVoronoi(false);
             break;
     }
 
@@ -520,7 +519,7 @@ function generateConvexHull2(animate)
     clearCanvas();
 
     if(animate)
-        animateConvexHull2(points, 1000/speed);
+        animateConvexHull2(points, 500/speed);
     else
     {
         const hull = convexHull2(points);
@@ -605,6 +604,32 @@ function generateTriangulate(animate)
     }
 }
 
+function generateVoronoi(animate)
+{
+    let points = canvas.points;
+    clearCanvas();
+
+    if(animate)
+    {
+        //fuck off
+    }    
+    else
+    {
+        const edges = voronoiDiagram(points);
+        let lines = [];
+        for(const edge of edges)
+        {
+            edge.pL.radius = 0;
+            edge.pR.radius = 0;
+            lines.push(new Line(edge.pL, edge.pR, 4, BLUE));
+        }
+
+        canvas.points = points;
+        canvas.lines = lines;
+        redrawCanvas();
+    }
+}
+
 //--------------------------
 //--------------------------
 //    INPUT GENERATION
@@ -618,10 +643,10 @@ function generateRandomInput()
     switch(algorithm)
     {
         case CXH:
-            canvas.points = generateRandomPoints(15);
+            canvas.points = generateRandomPoints(25);
             break;
         case CH2:
-            canvas.points = generateRandomPoints(10);
+            canvas.points = generateRandomPoints(30);
             break;
         case TRI:
             canvas.polygons = [generateRandomPolygon()];
@@ -632,8 +657,9 @@ function generateRandomInput()
         case ART:
             canvas.points = generateRandomPoints(15);
             break;
-        case FTS:
-            canvas.points = generateRandomPoints(15);
+        case VOR:
+            canvas.points = JSON.parse(`[{"x":544.5322625453966,"y":125.1690451604901,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":775.3685709228167,"y":323.9987362112491,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":440.6073660087495,"y":263.9578860166987,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}]`);
+            //canvas.points = generateRandomPoints(3);
             break;
     }
 
@@ -730,7 +756,7 @@ var storedPolygons = [];
 
 function storePolygon()
 {
-    storedPolygons.push(canvas.polygons[0]);
-    console.log(JSON.stringify(canvas.polygons[0]));
+    storedPolygons.push(canvas.points);
+    console.log(JSON.stringify(canvas.points));
 }
 
