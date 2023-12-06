@@ -40,7 +40,6 @@ async function animateIntersections(lines, interval)
     //#############
     // draw initial lines
     canvas.lines = lines;
-    resetLines();
     redrawCanvas();
     //#############
     

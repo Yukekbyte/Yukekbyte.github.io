@@ -45,9 +45,21 @@
                         </div>
                     </div>
 
+                    <div class="selector">
+                        <img src="symbols/size_symbol.png" width="45">
+                        <div class="buttons-in-selector">
+                            <button id="size-minmin"   class="button-selector" onclick="changeSize(id)">-5</button>
+                            <button id="size-min"      class="button-selector" onclick="changeSize(id)">-1</button>
+                            <button id="size-amount"   class="button-selector">+0</button>
+                            <button id="size-plus"     class="button-selector" onclick="changeSize(id)">+1</button>
+                            <button id="size-plusplus" class="button-selector" onclick="changeSize(id)">+5</button>
+                        </div>
+                    </div>
+
                     <button id="button-generate" class="button-inner" onclick="generateAlgorithm(true)">Generate</button>
-                    <button id="button-generate-input" class="button-inner" onclick="generateRandomInput()">Random Input</button>
-                    <button class="button-inner" onclick="storePolygon()">Store</button>
+                    <button id="button-generate-input" class="button-inner" onclick="generateRandomInput()">Randomize Input</button>
+                    <button class="button-inner" onclick="save()">Save</button>
+                    <button class="button-inner" onclick="printSaves()">Print</button>
                     
                 </div>
     
@@ -64,7 +76,7 @@
             <div id="outer-lower">
                 <h1>Complex Geometry</h1>
                 <button id="ART-button" class="button-outer" onclick="changeAlgorithm(id)">Art Gallery</button>
-                <button id="VOR-button" class="button-outer" onclick="changeAlgorithm(id)">Voronoi</button>
+                <button id="VOR-button" class="button-outer" onclick="changeAlgorithm(id)">Fortune</button>
             </div>
         
         </div>

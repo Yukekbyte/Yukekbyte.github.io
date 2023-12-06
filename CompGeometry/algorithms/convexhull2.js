@@ -38,7 +38,6 @@ async function animateConvexHull2(points, interval)
     //#######################
     // draw initial points
     canvas.points = points;
-    resetPoints();
     redrawCanvas();
     //#######################
 

@@ -4,7 +4,7 @@ var ctx;
 var algorithm = CXH; // algorithm selected
 var canvasAlgorithm = CXH; // (input for) algorithm currently on canvas.
 var inputType = POINTS; // to regulate which algorithms can be animated with given input on canvas.
-var hasGenerated = false; // the output of algorithm is drawn on canvas.
+var inputSize = 10; // amount of (points) / (lines) / (points in polygons) on canvas
 var speed = SPEED[2];
 
 window.onload = function()
@@ -28,6 +28,8 @@ window.onload = function()
     // first config
     pressedAlgorithm("CXH-button");
     pressedSpeed("speed-3");
+    document.getElementById("size-amount").innerHTML = inputSize.toString();
+    document.getElementById("size-amount").classList.add("button-selector-active");
 
     generateRandomInput();
     generateAlgorithm(false);
@@ -80,9 +82,15 @@ function changeAlgorithm(id)
 
     // update regenerate button
     if(inputNeeded != inputType)
+    {
+        disableInputSize();
         disableGenerate();
+    }
     else
+    {
+        enableInputSize();
         enableGenerate();
+    }
 
     // update info text
     const infoDiv = document.getElementById("info");
@@ -113,6 +121,36 @@ function changeSpeed(id)
     }
 }
 
+function changeSize(id)
+{
+    switch(id)
+    {
+        case "size-minmin":
+            diff = inputSize - Math.max(3, inputSize - 5);
+            removeInput(diff);
+            inputSize = inputSize - diff;
+            break;
+        case "size-min":
+            diff = inputSize - Math.max(3, inputSize - 1);
+            removeInput(diff);
+            inputSize = inputSize - diff;
+            break;
+        case "size-plus":
+            diff = Math.min(inputSize + 1, 50) - inputSize;
+            addInput(diff);
+            inputSize = inputSize + diff;
+            break;
+        case "size-plusplus":
+            diff = Math.min(inputSize + 5, 50) - inputSize;
+            addInput(diff);
+            inputSize = inputSize + diff;
+            break;
+    }
+
+    document.getElementById("size-amount").innerHTML = inputSize.toString();
+    generateAlgorithm(false);
+}
+
 function pressedAlgorithm(id)
 {
     document.getElementById("CXH-button").classList.remove("button-outer-active");
@@ -132,6 +170,40 @@ function pressedSpeed(id)
     document.getElementById("speed-4").classList.remove("button-selector-active");
     document.getElementById("speed-5").classList.remove("button-selector-active");
     document.getElementById(id).classList.add("button-selector-active");
+}
+
+function disableInputSize()
+{
+    const minmin = document.getElementById("size-minmin");
+    const min = document.getElementById("size-min");
+    const amount = document.getElementById("size-amount");
+    const plus = document.getElementById("size-plus");
+    const plusplus = document.getElementById("size-plusplus");
+
+    const buttons = [minmin, min, amount, plus, plusplus];
+
+    for(const button of buttons)
+    {
+        button.classList.add("button-selector-inactive");
+        button.disabled = true;
+    }
+}
+
+function enableInputSize()
+{
+    const minmin = document.getElementById("size-minmin");
+    const min = document.getElementById("size-min");
+    const amount = document.getElementById("size-amount");
+    const plus = document.getElementById("size-plus");
+    const plusplus = document.getElementById("size-plusplus");
+
+    const buttons = [minmin, min, amount, plus, plusplus];
+
+    for(const button of buttons)
+    {
+        button.classList.remove("button-selector-inactive");
+        button.disabled = false;
+    }
 }
 
 function disableGenerate()
@@ -257,12 +329,8 @@ function handleMouseMove(e)
     point.x += dx;
     point.y += dy;
     
-    // if there is output on the canvas, refresh output.
-    if(hasGenerated)
-        generateAlgorithm(false);
-    // else just redraw the canvas with moved point.
-    else
-        redrawCanvas();
+    // refrsh the algorithm
+    generateAlgorithm(false);
 }
 
 function handleMouseUp(e)
@@ -497,8 +565,6 @@ function generateAlgorithm(animate)
             generateVoronoi(false);
             break;
     }
-
-    hasGenerated = true;
 }
 
 function generateConvexHull(animate)
@@ -547,6 +613,11 @@ function generateIntersections(animate)
 {
     resetLines();
     let lines = canvas.lines;
+    for(const l of lines)
+    {
+        l.p1.radius *= 0.9;
+        l.p2.radius *= 0.9;
+    }
     clearCanvas();
 
     if(animate)
@@ -554,7 +625,7 @@ function generateIntersections(animate)
     else
     {
         const inters = intersections(lines);
-        for(const p of inters) {p.fillColor = RED; p.borderColor = RED;}
+        for(const p of inters) {p.fillColor = RED; p.borderColor = RED; p.radius *= 0.9}
 
         canvas.lines = lines;
         canvas.points = inters;
@@ -656,36 +727,69 @@ function generateRandomInput()
     switch(algorithm)
     {
         case CXH:
-            canvas.points = generateRandomPoints(25);
+            canvas.points = generateRandomPoints(inputSize);
             inputType = POINTS;
             break;
         case CH2:
-            canvas.points = generateRandomPoints(30);
+            canvas.points = generateRandomPoints(inputSize);
             inputType = POINTS;
             break;
         case TRI:
-            canvas.polygons = [generateRandomPolygon()];
+            canvas.polygons = [generateRandomStarPolygon(inputSize)];
+            //canvas.polygons = [generateRandomPolygon()]; // TODO: Polygon with inputSize points
             inputType = POLYGON;
             break;
         case LIS:
-            canvas.lines = generateRandomLines(12);
+            canvas.lines = generateRandomLines(inputSize);
             inputType = LINES;
             break;
         case ART:
-            canvas.points = generateRandomPoints(15);
+            canvas.points = generateRandomPoints(inputSize);
             inputType = POINTS;
             break;
         case VOR:
             //canvas.points = JSON.parse(`[{"x":820.0989085751231,"y":502.22983306188564,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":467.27545911156017,"y":222.17800975883864,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":304.66781698305226,"y":94.91140664266472,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":895.6657644051727,"y":605.8744410993587,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":564.9614264146626,"y":174.23082712694764,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":186.21605384025807,"y":185.74672657267487,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":82.83341074043919,"y":611.6476342225809,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":648.6132313957385,"y":295.6469683431802,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":321.40497883740437,"y":27.18905958801876,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":654.6442250126726,"y":55.39209818384611,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":194.8079757627054,"y":483.98959956893617,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":653.9057661000994,"y":363.57925043337764,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":383.5299736712828,"y":83.24573453794738,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":274.7262533214319,"y":436.570662058559,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":208.54190885676974,"y":2.3470483648818075,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":913.138731429159,"y":318.56617144466446,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":759.350102853849,"y":250.33371201123435,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":574.8860528727085,"y":579.5639301828538,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":926.1555204742914,"y":330.2162796022484,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":153.27348978812435,"y":372.4463997268556,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":328.957927976375,"y":269.31761863051855,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":598.7750293387696,"y":269.9907562078041,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":360.75454892475403,"y":521.5527653510087,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":182.442556575993,"y":561.7665894060434,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":941.3239122982434,"y":171.6705449645356,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":54.57197173020663,"y":347.45472287460746,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":932.8211126892913,"y":221.7160772590107,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":436.8206310517522,"y":260.9501184717619,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":84.7114843096427,"y":341.9674200833726,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":815.939809928762,"y":451.06930338613734,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":284.0356551647205,"y":568.2250549465933,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":381.841380481868,"y":324.2797361949896,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":308.72068114791443,"y":528.1016583116312,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":841.1401787296045,"y":390.6849933608807,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":409.7185154977799,"y":46.441474832762495,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":495.24311147481063,"y":489.22956232190575,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":828.8401344036944,"y":20.604198430309193,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":355.05336012528556,"y":576.965080065409,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":389.9068856266466,"y":56.41542633221911,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":233.45521205798474,"y":511.41857483659356,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}]`);
-            canvas.points = generateRandomPoints(30);
+            canvas.points = generateRandomPoints(inputSize);
             inputType = POINTS;
             break;
     }
 
-    hasGenerated = false;
-    redrawCanvas();
+    generateAlgorithm(false);
     canvasAlgorithm = algorithm;
+    enableInputSize();
     enableGenerate();
+}
+
+function addInput(amount)
+{
+    switch(inputType)
+    {
+        case POINTS:
+            canvas.points.push(...generateRandomPoints(amount));
+            break;
+        case LINES:
+            canvas.lines.push(...generateRandomLines(amount));
+            break;
+        case POLYGON:
+            canvas.polygons[0] = addPointsToPolygon(canvas.polygons[0], amount); // TODO
+            break;
+    }
+}
+
+function removeInput(amount)
+{
+    switch(inputType)
+    {
+        case POINTS:
+            canvas.points.splice(0, amount);
+            break;
+        case LINES:
+            canvas.lines.splice(0, amount);
+            break;
+        case POLYGON:
+            canvas.polygons[0] = removePointsFromPolygon(canvas.polygons[0], amount); // TODO
+            break;
+    }
 }
 
 function generateRandomPoints(n)
@@ -772,10 +876,26 @@ function generateRandomStarPolygon(n)
 
 // TEMPORARY STUFF
 var storedPolygons = [];
+var storedLines = [];
+var storedPoints = [];
 
-function storePolygon()
+function save()
 {
-    storedPolygons.push(canvas.points);
-    console.log(JSON.stringify(canvas.points));
+    if(inputType == POINTS)
+        storedPoints.push(canvas.points);
+    if(inputType == LINES)
+        storedLines.push(canvas.lines);
+    if(inputType == POLYGON)
+        storedPolygons.push(canvas.polygons[0]);
+}
+
+function printSaves()
+{
+    console.log("POINTS");
+    console.log(JSON.stringify(storedPoints));
+    console.log("LINES");
+    console.log(JSON.stringify(storedLines));
+    console.log("POLGYONS");
+    console.log(JSON.stringify(storedPolygons));
 }
 
