@@ -3,6 +3,11 @@ const SPEED = [0.5, 1, 3, 10, 25];
 const CANVAS_WIDTH = 950;
 const CANVAS_HEIGHT = 630;
 
+// input types
+const POINTS = 0;
+const LINES = 1;
+const POLYGON = 2;
+
 // colors
 const RED = "#FF0000";
 const BLUE = "#007bff";
@@ -26,7 +31,7 @@ const TRANSPARENT = "rgba(0, 0, 0, 0)";
 
 // algorithm identifiers
 const CXH = 0;
-const CH2 = 1
+const CH2 = 1;
 const TRI = 2;
 const LIS = 3;
 const ART = 4;
@@ -141,4 +146,10 @@ function crossNorm(p0, p1, p2)
         return 0;
     else 
         return cross * 1/(Math.sqrt((vx**2 + vy**2)*(wx**2+wy**2)));
+}
+
+// Returns euclidian distance between 2 points.
+function dist(p1, p2)
+{
+    return Math.sqrt((p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y));
 }

@@ -9,7 +9,7 @@ function voronoiDiagram(inputPoints)
     let beach;
     let diagram = [];
     let values = [];
-    let oldCircles = [];
+    //let oldCircles = [];
     for(const p of points) {values.push(-p.y);}
 
     // sort points on y-co (reversed)
@@ -25,7 +25,7 @@ function voronoiDiagram(inputPoints)
     {
         const event = events.shift();
         
-        if(event.x != undefined)
+        if(event.x != undefined) // point event
         {
             // add new arc
             const arc = addToBeach(event);
@@ -43,7 +43,7 @@ function voronoiDiagram(inputPoints)
             const arcRR = arcRight(arcR);
             const eventR = findCircleEvent(arc, arcR, arcRR, event.y);
 
-            if(eventR != null && (arcLL == null || arcRR.point != arcLL.point))
+            if(eventR != null)
                 insertEvent(eventR);
         }
         else // event instanceof CircleEvent
@@ -54,8 +54,6 @@ function voronoiDiagram(inputPoints)
 
             let breakpLeft = event.arc.parent;
             let breakpRight = event.arc.parent;
-            let newEdge = new VoronoiEdge();
-            diagram.push(newEdge);
             
             if(event.arc.parent.pRight == event.arc.point)
             {
@@ -63,23 +61,18 @@ function voronoiDiagram(inputPoints)
                 while(breakpRight.pLeft != event.arc.point || breakpRight.pRight != event.arcR.point)
                     breakpRight = breakpRight.parent;
 
-                // fix edges
-                mergeEdges(event, breakpLeft, breakpRight, newEdge, event.arcL.point.y < event.arcR.point.y);
-                if(newEdge.pLComplete)
-                    newEdge.pR = breakpRight;
-                if(newEdge.pRComplete)
-                    newEdge.pL = breakpRight;
-                breakpRight.looseEdge = newEdge;
-
                 // remove breakpLeft
                 breakpLeft.leftChild.parent = breakpLeft.parent;
                 if(breakpLeft.parent.leftChild == breakpLeft)
                     breakpLeft.parent.leftChild = breakpLeft.leftChild;
                 else
                     breakpLeft.parent.rightChild = breakpLeft.leftChild;
-
+                
                 // change breakpRight
                 breakpRight.pLeft = breakpLeft.pLeft;
+                
+                // fix edges
+                mergeEdges(breakpLeft.looseEdge, breakpRight.looseEdge, breakpRight, event);
             }   
             else
             {
@@ -87,23 +80,18 @@ function voronoiDiagram(inputPoints)
                 while(breakpLeft.pLeft != event.arcL.point || breakpLeft.pRight != event.arc.point)
                    breakpLeft = breakpLeft.parent;
 
-                // fix edges
-                mergeEdges(event, breakpLeft, breakpRight, newEdge, event.arcL.point.y < event.arcR.point.y);
-                if(newEdge.pLComplete)
-                    newEdge.pR = breakpLeft;
-                else
-                    newEdge.pL = breakpLeft;
-                breakpLeft.looseEdge = newEdge;
-
                 // remove breakpRight
                 breakpRight.rightChild.parent = breakpRight.parent;
                 if(breakpRight.parent.rightChild == breakpRight)
                     breakpRight.parent.rightChild = breakpRight.rightChild;
                 else
                     breakpRight.parent.leftChild = breakpRight.rightChild;
-
+                
                 // change breakpLeft
                 breakpLeft.pRight = breakpRight.pRight;
+
+                // fix edges
+                mergeEdges(breakpRight.looseEdge, breakpLeft.looseEdge, breakpLeft, event);
             }
 
             // circle events of neighbors of arc to null
@@ -128,21 +116,23 @@ function voronoiDiagram(inputPoints)
     let VoronoiEdges = [];
     for(const edge of diagram)
     {
-        if(edge.pLComplete && edge.pRComplete)
+        if(edge.pL instanceof Point && edge.pR instanceof Point)
         {
             VoronoiEdges.push(edge);
             continue;
         }
         
-        if(!edge.pLComplete)
-            edge.pL = edge.pL.getCo(0);
+        let pL = edge.pL;
+        if(edge.pL instanceof Breakpoint)
+            pL = edge.pL.getCo(0);
 
-        if(!edge.pRComplete)
-            edge.pR = edge.pR.getCo(0);
+        let pR = edge.pR;
+        if(edge.pR instanceof Breakpoint)
+            pR = edge.pR.getCo(0);
 
         // calculate slope and point on edge
-        const m = (edge.pR.y - edge.pL.y)/(edge.pR.x - edge.pL.x);
-        const p = new Point(edge.pL.x, edge.pL.y);
+        const m = (pR.y - pL.y)/(pR.x - pL.x);
+        const p = new Point(pL.x, pL.y);
 
         // clamp edge sides
         if(m < 0)
@@ -151,29 +141,17 @@ function voronoiDiagram(inputPoints)
             {
                 // y = m(x - pL.x) + pL.y
                 // x = (y - pL.y)/m + pL.x
-                if(!edge.pLComplete)
-                {
-                    edge.pL.y = CANVAS_HEIGHT +  10;
-                    edge.pL.x = (CANVAS_HEIGHT + 10 - p.y)/m + p.x;
-                }
-                if(!edge.pRComplete)
-                {
-                    edge.pR.y = -10;
-                    edge.pR.x = (-10 - p.y)/m + p.x;
-                }
+                if(edge.pL instanceof Breakpoint)
+                    edge.pL = new Point((CANVAS_HEIGHT + 10 - p.y)/m + p.x, CANVAS_HEIGHT +  10);
+                if(edge.pR instanceof Breakpoint)
+                    edge.pR = new Point((-10 - p.y)/m + p.x, -10);
             }
             else
             {
-                if(!edge.pLComplete)
-                {
-                    edge.pL.x = -10;
-                    edge.pL.y = m*(-10 - p.x) + p.y;
-                }
-                if(!edge.pRComplete)
-                {
-                    edge.pR.x = CANVAS_WIDTH + 10;
-                    edge.pR.y = m*(CANVAS_WIDTH + 10 - p.x) + p.y;
-                }
+                if(edge.pL instanceof Breakpoint)
+                    edge.pL = new Point(-10, m*(-10 - p.x) + p.y);
+                if(edge.pR instanceof Breakpoint)
+                    edge.pR = new Point(CANVAS_WIDTH + 10, m*(CANVAS_WIDTH + 10 - p.x) + p.y);
             }
         }
         else
@@ -182,29 +160,17 @@ function voronoiDiagram(inputPoints)
             {
                 // y = m(x - pL.x) + pL.y
                 // x = (y - pL.y)/m + pL.x
-                if(!edge.pLComplete)
-                {
-                    edge.pL.y = -10;
-                    edge.pL.x = (-10 - p.y)/m + p.x;
-                }
-                if(!edge.pRComplete)
-                {
-                    edge.pR.y = CANVAS_HEIGHT + 10;
-                    edge.pR.x = (CANVAS_HEIGHT + 10 - p.y)/m + p.x;
-                }
+                if(edge.pL instanceof Breakpoint)
+                    edge.pL = new Point((-10 - p.y)/m + p.x, -10);
+                if(edge.pR instanceof Breakpoint)
+                    edge.pR = new Point((CANVAS_HEIGHT + 10 - p.y)/m + p.x, CANVAS_HEIGHT + 10);
             }
             else
             {
-                if(!edge.pLComplete)
-                {
-                    edge.pL.x = -10;
-                    edge.pL.y = m*(-10 - p.x) + p.y;
-                }
-                if(!edge.pRComplete)
-                {
-                    edge.pR.x = CANVAS_WIDTH + 10;
-                    edge.pR.y = m*(CANVAS_WIDTH + 10 - p.x) + p.y;
-                }
+                if(edge.pL instanceof Breakpoint)
+                    edge.pL = new Point(-10, m*(-10 - p.x) + p.y);
+                if(edge.pR instanceof Breakpoint)
+                    edge.pR = new Point(CANVAS_WIDTH + 10, m*(CANVAS_WIDTH + 10 - p.x) + p.y);
             }
         }
 
@@ -230,9 +196,19 @@ function voronoiDiagram(inputPoints)
                 walk = walk.rightChild;
         }
 
-        // split arc (keep circle events null)
+        // circle event to null
+        falseAlarm(walk);
+
+        // split arc (keep circle events null but update all other circle events that this arc was linked to)
         let arcLeft = new Arc(walk.point);
+        arcLeft.circleEventsR = walk.circleEventsR;
+        for(const event of arcLeft.circleEventsR)
+            event.arcR = arcLeft;
+
         let arcRight = new Arc(walk.point);
+        arcRight.circleEventsL = walk.circleEventsL;
+        for(const event of arcRight.circleEventsL)
+            event.arcL = arcRight;
 
         // create new arc
         let newArc = new Arc(point);
@@ -273,7 +249,23 @@ function voronoiDiagram(inputPoints)
 
         // create circle
         const circle = new CircleEvent(arcL, arc, arcR);
+
+        // check diverging breakpoints
+            // search breakpLeft
+        let breakpLeft = arc.parent;
+        while(breakpLeft.pLeft != arcL.point || breakpLeft.pRight != arc.point)
+        breakpLeft = breakpLeft.parent;
+            // search breakpRight
+        let breakpRight = arc.parent;
+        while(breakpRight.pLeft != arc.point || breakpRight.pRight != arcR.point)
+            breakpRight = breakpRight.parent;
+
+            // breakpoints diverging?
+        const eps = 0.01 // TODO: other divering check needed: this METHOD is WRONG
+        if(areDiverging(breakpLeft, breakpRight, y))
+            return null;
         
+        /*
         // check if circle event already tried
         for(const oldCircle of oldCircles)
         {
@@ -284,11 +276,14 @@ function voronoiDiagram(inputPoints)
         }
 
         oldCircles.push(circle);
+        */
 
         if(circle.bottom.y > y)
             return null;
         
         arc.circleEvent = circle;
+        arcL.circleEventsL.push(circle);
+        arcR.circleEventsR.push(circle);
 
         return circle;
     }
@@ -300,7 +295,7 @@ function voronoiDiagram(inputPoints)
         for(let i = 0; i < events.length; i++)
         {
             const event = events[i];
-            if((event instanceof Point       && event.y < y) ||
+            if((event.x != undefined     && event.y < y) ||
                (event instanceof CircleEvent && event.bottom.y < y))
             {
                 events.splice(i, 0, circleEvent);
@@ -314,13 +309,16 @@ function voronoiDiagram(inputPoints)
 
     function falseAlarm(arc)
     {
-        if(arc.circleEvent == null)
+        const e = arc.circleEvent;
+        if(e == null)
             return;
 
         for(let i = 0; i < events.length; i++)
         {
-            if(events[i] == arc.circleEvent)
+            if(events[i] == e)
             {
+                e.arcL.circleEventsL.splice(e.arcL.circleEventsL.indexOf(e), 1);
+                e.arcR.circleEventsR.splice(e.arcR.circleEventsR.indexOf(e), 1);
                 arc.circleEvent = null;
                 events.splice(i, 1);
                 return;
@@ -364,48 +362,72 @@ function voronoiDiagram(inputPoints)
         return walk;
     }
 
-    function mergeEdges(event, bpL, bpR, newEdge, newEdgeGoesRight)
+    function mergeEdges(bpEdge, otherEdge, bp, event)
     {
         const mergePoint = event.center;
-        const bot = event.bottom;
-
-        // check which point of loose edge of bpL closer to mergePoint
-        if(bpL.looseEdge.pLComplete || (!bpL.looseEdge.pRComplete &&
-           Math.abs(bpL.looseEdge.pR.getCo(bot.y).x - mergePoint.x) < Math.abs(bpL.looseEdge.pL.getCo(bot.y).x - mergePoint.x)))
-        {
-            bpL.looseEdge.pR = mergePoint;
-            bpL.looseEdge.pRComplete = true;
-        }
-        else
-        {
-            bpL.looseEdge.pL = mergePoint;
-            bpL.looseEdge.pLComplete = true;
-        }
-
-        // check which point of loose edge of bpR closer to mergePoint
-        if(bpR.looseEdge.pLComplete || (!bpR.looseEdge.pRComplete &&
-           Math.abs(bpR.looseEdge.pR.getCo(bot.y).x - mergePoint.x) < Math.abs(bpR.looseEdge.pL.getCo(bot.y).x - mergePoint.x)))
-        {
-            bpR.looseEdge.pR = mergePoint;
-            bpR.looseEdge.pRComplete = true;
-        }
-        else
-        {
-            bpR.looseEdge.pL = mergePoint;
-            bpR.looseEdge.pLComplete = true;
-        }
-
-        // set left or right point of new edge
-        if(newEdgeGoesRight)
+        let newEdge = new VoronoiEdge();
+        
+        completeSide(bpEdge, event);
+        completeSide(otherEdge, event);
+        
+        if(bp.pLeft.y < bp.pRight.y)
         {
             newEdge.pL = mergePoint;
-            newEdge.pLComplete = true;
+            newEdge.pR = bp;
         }
         else
         {
             newEdge.pR = mergePoint;
-            newEdge.pRComplete = true;
+            newEdge.pL = bp;
         }
+        bp.looseEdge = newEdge;
+
+        diagram.push(newEdge);
+    }
+
+    function completeSide(edge, event)
+    {
+        const mergePoint = event.center;
+        const y = event.bottom.y;
+
+        if(edge.pL instanceof Point)   
+            edge.pR = mergePoint;
+        else if(edge.pR instanceof Point)
+            edge.pL = mergePoint;
+        else
+        {
+            if(dist(edge.pL.getCo(y), mergePoint) < dist(edge.pR.getCo(y), mergePoint))
+                edge.pL = mergePoint;
+            else
+                edge.pR = mergePoint;
+        }
+    }
+
+    function areDiverging(breakpoint1, breakpoint2, y)
+    {
+        const eps = 0.000001;
+        const p1 = breakpoint1.getCo(y-eps); // can be funky with epsilson (0.1e-5 not enough and 0.1e-7 too much)
+        const p2 = breakpoint1.getCo(y-20);
+
+        const q1 = breakpoint2.getCo(y-eps);
+        const q2 = breakpoint2.getCo(y-20);
+
+        // calculate intersection point (probability parallell almost 0)
+        const m1 = (p2.y - p1.y)/(p2.x - p1.x);
+        const m2 = (q2.y - q1.y)/(q2.x - q1.x);
+
+        // m1(x - x1) + y1 = m2(x - x2) + y2 (solve for x)
+        const xInter = (q1.y - p1.y + m1*p1.x - m2*q1.x)/(m1 - m2);
+        const yInter = m1*(xInter - p1.x) + p1.y;
+
+        const inter = new Point(xInter, yInter);
+
+        // if intersection is above the the line that connects both breakpoints (at current sweepline y-co)
+        // then the breakpoints are diverging.
+        if(p1.x < q1.x)
+            return cross(p1, q1, inter) > 0;
+        else
+            return cross(q1, p1, inter) > 0;
     }
 }
 
@@ -491,7 +513,9 @@ class Arc
     {
         this.point = point;
         this.parent = parent = null;
-        this.circleEvent = null;
+        this.circleEvent = null; // event where this arc is the middle arc (can only be one)
+        this.circleEventsL = []; // events where this arc is the left arc
+        this.circleEventsR = []; // events where this arc is the right arc
     }
 }
 
@@ -501,8 +525,5 @@ class VoronoiEdge
     {
         this.pL = null;
         this.pR = null;
-        this.pLComplete = false;
-        this.pRComplete = false;
     }
 }
-

@@ -3,6 +3,7 @@ var canvasElem;
 var ctx;
 var algorithm = CXH; // algorithm selected
 var canvasAlgorithm = CXH; // (input for) algorithm currently on canvas.
+var inputType = POINTS; // to regulate which algorithms can be animated with given input on canvas.
 var hasGenerated = false; // the output of algorithm is drawn on canvas.
 var speed = SPEED[2];
 
@@ -48,30 +49,37 @@ function changeAlgorithm(id)
     pressedAlgorithm(id);
 
     // update algorithm
+    let inputNeeded;
     switch(id)
     {
         case "CXH-button":
             algorithm = CXH;
+            inputNeeded = POINTS;
             break;
         case "CH2-button":
             algorithm = CH2;
+            inputNeeded = POINTS;
             break;
         case "LIS-button":
             algorithm = LIS;
+            inputNeeded = LINES;
             break;
         case "TRI-button":
             algorithm = TRI;
+            inputNeeded = POLYGON;
             break;
         case "ART-button":
             algorithm = ART;
+            inputNeeded = POINTS;
             break;
         case "VOR-button":
             algorithm = VOR;
+            inputNeeded = POINTS;
             break;
     }
 
     // update regenerate button
-    if(algorithm != canvasAlgorithm)
+    if(inputNeeded != inputType)
         disableGenerate();
     else
         enableGenerate();
@@ -495,6 +503,7 @@ function generateAlgorithm(animate)
 
 function generateConvexHull(animate)
 {
+    resetPoints();
     let points = canvas.points;
     clearCanvas();
 
@@ -515,6 +524,7 @@ function generateConvexHull(animate)
 
 function generateConvexHull2(animate)
 {
+    resetPoints();
     let points = canvas.points;
     clearCanvas();
 
@@ -535,6 +545,7 @@ function generateConvexHull2(animate)
 
 function generateIntersections(animate)
 {
+    resetLines();
     let lines = canvas.lines;
     clearCanvas();
 
@@ -553,6 +564,7 @@ function generateIntersections(animate)
 
 function generateTriangulate(animate)
 {
+    resetPolygons();
     let polygon = canvas.polygons[0]; // base polygon should always be at index 0
     clearCanvas();
 
@@ -606,6 +618,7 @@ function generateTriangulate(animate)
 
 function generateVoronoi(animate)
 {
+    resetPoints();
     let points = canvas.points;
     clearCanvas();
 
@@ -644,22 +657,28 @@ function generateRandomInput()
     {
         case CXH:
             canvas.points = generateRandomPoints(25);
+            inputType = POINTS;
             break;
         case CH2:
             canvas.points = generateRandomPoints(30);
+            inputType = POINTS;
             break;
         case TRI:
             canvas.polygons = [generateRandomPolygon()];
+            inputType = POLYGON;
             break;
         case LIS:
             canvas.lines = generateRandomLines(12);
+            inputType = LINES;
             break;
         case ART:
             canvas.points = generateRandomPoints(15);
+            inputType = POINTS;
             break;
         case VOR:
-            canvas.points = JSON.parse(`[{"x":544.5322625453966,"y":125.1690451604901,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":775.3685709228167,"y":323.9987362112491,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":440.6073660087495,"y":263.9578860166987,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}]`);
-            //canvas.points = generateRandomPoints(3);
+            //canvas.points = JSON.parse(`[{"x":820.0989085751231,"y":502.22983306188564,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":467.27545911156017,"y":222.17800975883864,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":304.66781698305226,"y":94.91140664266472,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":895.6657644051727,"y":605.8744410993587,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":564.9614264146626,"y":174.23082712694764,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":186.21605384025807,"y":185.74672657267487,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":82.83341074043919,"y":611.6476342225809,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":648.6132313957385,"y":295.6469683431802,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":321.40497883740437,"y":27.18905958801876,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":654.6442250126726,"y":55.39209818384611,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":194.8079757627054,"y":483.98959956893617,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":653.9057661000994,"y":363.57925043337764,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":383.5299736712828,"y":83.24573453794738,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":274.7262533214319,"y":436.570662058559,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":208.54190885676974,"y":2.3470483648818075,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":913.138731429159,"y":318.56617144466446,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":759.350102853849,"y":250.33371201123435,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":574.8860528727085,"y":579.5639301828538,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":926.1555204742914,"y":330.2162796022484,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":153.27348978812435,"y":372.4463997268556,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":328.957927976375,"y":269.31761863051855,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":598.7750293387696,"y":269.9907562078041,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":360.75454892475403,"y":521.5527653510087,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":182.442556575993,"y":561.7665894060434,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":941.3239122982434,"y":171.6705449645356,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":54.57197173020663,"y":347.45472287460746,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":932.8211126892913,"y":221.7160772590107,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":436.8206310517522,"y":260.9501184717619,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":84.7114843096427,"y":341.9674200833726,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":815.939809928762,"y":451.06930338613734,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":284.0356551647205,"y":568.2250549465933,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":381.841380481868,"y":324.2797361949896,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":308.72068114791443,"y":528.1016583116312,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":841.1401787296045,"y":390.6849933608807,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":409.7185154977799,"y":46.441474832762495,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":495.24311147481063,"y":489.22956232190575,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":828.8401344036944,"y":20.604198430309193,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":355.05336012528556,"y":576.965080065409,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":389.9068856266466,"y":56.41542633221911,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"},{"x":233.45521205798474,"y":511.41857483659356,"radius":8,"borderWidth":3,"borderColor":"#000000","fillColor":"#000000"}]`);
+            canvas.points = generateRandomPoints(30);
+            inputType = POINTS;
             break;
     }
 
