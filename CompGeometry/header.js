@@ -148,6 +148,18 @@ function crossNorm(p0, p1, p2)
         return cross * 1/(Math.sqrt((vx**2 + vy**2)*(wx**2+wy**2)));
 }
 
+// returns true if line1 and line2 intersect.
+function intersect(line1, line2)
+{
+    const p1 = line1.p1;
+    const p2 = line1.p2;
+    const q1 = line2.p1;
+    const q2 = line2.p2;
+
+    return cross(p1, q1, p2) * cross(p1, q2, p2) <= 0 &&
+           cross(q1, p1, q2) * cross(q1, p2, q2) <= 0;
+}
+
 // Returns euclidian distance between 2 points.
 function dist(p1, p2)
 {

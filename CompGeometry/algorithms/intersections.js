@@ -138,18 +138,6 @@ async function animateIntersections(lines, interval)
     TIMEOUTS.clearAllTimeouts();
 }
 
-// returns true if line1 and line2 intersect.
-function intersect(line1, line2)
-{
-    const p1 = line1.p1;
-    const p2 = line1.p2;
-    const q1 = line2.p1;
-    const q2 = line2.p2;
-
-    return cross(p1, q1, p2) * cross(p1, q2, p2) <= 0 &&
-           cross(q1, p1, q2) * cross(q1, p2, q2) <= 0;
-}
-
 // returns the intersectionpoint of 2 crossing lines.
 // intersect(line1, line2) must return true.
 function intersection(line1, line2)
