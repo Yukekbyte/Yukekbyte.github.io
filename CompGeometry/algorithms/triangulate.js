@@ -320,7 +320,7 @@ function splitPolygon(polygon, diagonals)
     let polygons = [];
     let usedDiagonals = [];
 
-    findPolygons(1, 0);
+    findPolygons(0, n-1);
 
     return polygons;
 
