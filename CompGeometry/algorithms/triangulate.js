@@ -610,8 +610,15 @@ async function animateMakeMonotone(polygon, interval)
                 await newDiagonal(p, helpers[i]);
 
             //######
-            helpers[i].fillColor = BLACK;
-            helpers[i].borderColor = BLACK;
+            let changeColor = true;
+            for(let k = 0; k < helpers.length; k++)
+                if(k != i && helpers[k] == helpers[i])
+                    changeColor = false; // helpers[i] is also a helper for another interval
+            if(changeColor)
+            {
+                helpers[i].fillColor = BLACK;
+                helpers[i].borderColor = BLACK;
+            }
             p.fillColor = RED;
             p.borderColor = RED;
             redrawCanvas();
@@ -638,8 +645,15 @@ async function animateMakeMonotone(polygon, interval)
         await newDiagonal(p, helpers[i]);
 
         //######
-        helpers[i].fillColor = BLACK;
-        helpers[i].borderColor = BLACK;
+        let changeColor = true;
+            for(let k = 0; k < helpers.length; k++)
+                if(k != i && helpers[k] == helpers[i])
+                    changeColor = false; // helpers[i] is also a helper for another interval
+        if(changeColor)
+        {
+            helpers[i].fillColor = BLACK;
+            helpers[i].borderColor = BLACK;
+        }
         p.fillColor = RED;
         p.borderColor = RED;
         redrawCanvas();
@@ -680,8 +694,15 @@ async function animateMakeMonotone(polygon, interval)
             await newDiagonal(p, helpers[i]);
 
         //######
-        helpers[i].fillColor = BLACK;
-        helpers[i].borderColor = BLACK;
+        let changeColor = true;
+            for(let k = 0; k < helpers.length; k++)
+                if(k != i && helpers[k] == helpers[i])
+                    changeColor = false; // helpers[i] is also a helper for another interval
+        if(changeColor)
+        {
+            helpers[i].fillColor = BLACK;
+            helpers[i].borderColor = BLACK;
+        }
         p.fillColor = RED;
         p.borderColor = RED;
         redrawCanvas();
@@ -728,8 +749,17 @@ async function animateMakeMonotone(polygon, interval)
             if(canvas.lines[j].p1 == p || canvas.lines[j].p2 == p)
             {
                 canvas.lines.splice(j, 1);
-                helpers[i].fillColor = BLACK;
-                helpers[i].borderColor = BLACK;
+                
+                let changeColor = true;
+                for(let k = 0; k < helpers.length; k++)
+                    if(k != i && helpers[k] == helpers[i])
+                        changeColor = false;
+                
+                if(changeColor)
+                {
+                    helpers[i].fillColor = BLACK;
+                    helpers[i].borderColor = BLACK;
+                }
                 redrawCanvas();
                 await delay(interval);
                 break;
