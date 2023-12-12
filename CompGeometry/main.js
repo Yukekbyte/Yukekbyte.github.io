@@ -11,7 +11,7 @@ window.onload = function()
 {
     // initialise canvas elements
         // internal canvas data struct
-    canvas = new Canvas([], [], [], []);
+    canvas = new Canvas([], [], [], [], []);
         // html
     document.getElementById("mainCanvas").innerHTML = `<canvas id=\"canvas\" width=\"${CANVAS_WIDTH}\" height=\"${CANVAS_HEIGHT}\"></canvas>`;
         // html elements
@@ -467,6 +467,17 @@ function drawSweepLine(sweepline)
     ctx.stroke();
 }
 
+function drawParabola(parabola)
+{
+    ctx.beginPath();
+    ctx.moveTo(parabola.start.x, parabola.start.y);
+    ctx.quadraticCurveTo(parabola.control.x, parabola.control.y, parabola.end.x, parabola.end.y);
+    
+    ctx.lineWidth = parabola.width;
+    ctx.strokeStyle = parabola.color;
+    ctx.stroke();
+}
+
 // Draws shapes in 'canvas' data structure on screen
 function redrawCanvas()
 {
@@ -492,6 +503,11 @@ function redrawCanvas()
     for(const sweepline of canvas.sweeplines)
     {
         drawSweepLine(sweepline);
+    }
+
+    for(const parabola of canvas.parabolas)
+    {
+        drawParabola(parabola);
     }
 }
 
@@ -540,7 +556,7 @@ function resetPolygons()
 function clearCanvas()
 {
     TIMEOUTS.clearAllTimeouts();
-    canvas = new Canvas([], [], [], []);
+    canvas = new Canvas([], [], [], [], []);
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 }
 
@@ -571,7 +587,7 @@ function generateAlgorithm(animate)
             generateConvexHull(animate);
             break;
         case VOR:
-            generateVoronoi(false);
+            generateVoronoi(animate);
             break;
     }
 }
@@ -704,8 +720,8 @@ function generateVoronoi(animate)
 
     if(animate)
     {
-        //fuck off
-    }    
+        animateVoronoi(points, 50/speed);
+    }
     else
     {
         const edges = voronoiDiagram(points);

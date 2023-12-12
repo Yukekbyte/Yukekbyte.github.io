@@ -34,9 +34,21 @@ class Polygon
     }
 }
 
+class Parabola
+{
+    constructor(start, control, end, width=4, color=LIGHT_GREEN)
+    {
+        this.start = start;
+        this.control = control;
+        this.end = end;
+        this.width = width;
+        this.color = color;
+    }
+}
+
 class Canvas
 {
-    constructor(points, lines, polygons, sweeplines)
+    constructor(points, lines, polygons, sweeplines, parabolas)
     {
         this.points = points;
         this.lines = lines;
@@ -44,5 +56,6 @@ class Canvas
         // sweeplines are single float values 
         // representing the y value of the horzontal sweepline.
         this.sweeplines = sweeplines;
+        this.parabolas = parabolas
     }
 }
