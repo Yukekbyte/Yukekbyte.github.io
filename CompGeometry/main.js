@@ -157,7 +157,7 @@ function pressedAlgorithm(id)
     document.getElementById("CH2-button").classList.remove("button-outer-active");
     document.getElementById("LIS-button").classList.remove("button-outer-active");
     document.getElementById("TRI-button").classList.remove("button-outer-active");
-    document.getElementById("ART-button").classList.remove("button-outer-active");
+    //document.getElementById("ART-button").classList.remove("button-outer-active");
     document.getElementById("VOR-button").classList.remove("button-outer-active");
     document.getElementById(id).classList.add("button-outer-active");
 }
