@@ -19,13 +19,20 @@ const YELLOW = "#ffff00";
 const BLACK = "#000000";
 const WHITE = "#FFFFFF";
 const LIGHT_GREEN = "rgba(84, 209, 109, 1)";
+const LIGHT_BLUE = "rgba(105, 112, 250, 1)";
+const LIGHT_RED = "rgba(245, 106, 91, 1)";
+const LIGHT_ORANGE = "rgba(250, 194, 105, 1)";
+const LIGHT_PURPLE = "rgba(194, 105, 250, 1)";
+const LIGHT_ROSE = "rgba(245, 91, 229, 1)";
+const LIGHT_TEAL = "rgba(0, 247, 255, 1)";
 const TRANSP_LIGHT_GREEN = "rgba(84, 209, 109, 0.5)";
-const LIGHT_BLUE = "#6970fa";
-const LIGHT_RED = "#f56a5b";
-const LIGHT_ORANGE = "#fac269";
-const LIGHT_PURPLE = "#c269fa";
-const LIGHT_ROSE = "#f55be5";
-const LIGHT_TEAL = "#56fcf1";
+const TRANSP_LIGHT_BLUE = "rgba(105, 112, 250, 0.5)";
+const TRANSP_LIGHT_RED = "rgba(245, 106, 91, 0.5)";
+const TRANSP_LIGHT_ORANGE = "rgba(250, 194, 105, 0.5)";
+const TRANSP_LIGHT_PURPLE = "rgba(194, 105, 250, 0.5)";
+const TRANSP_LIGHT_ROSE = "rgba(245, 91, 229, 0.5)";
+const TRANSP_LIGHT_TEAL = "rgba(0, 247, 255, 0.5)";
+
 const TRANSP_BLUE = "rgba(0, 117, 255, 0.15)";
 const TRANSPARENT = "rgba(0, 0, 0, 0)";
 

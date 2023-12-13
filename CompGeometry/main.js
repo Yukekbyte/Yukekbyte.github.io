@@ -679,21 +679,21 @@ function generateTriangulate(animate)
         const [monotones, hardDiagonals, diagonals] = triangulate(polygon);
 
         // color monotones
-        let colors = [LIGHT_GREEN, LIGHT_RED, LIGHT_BLUE, LIGHT_PURPLE, LIGHT_ORANGE, LIGHT_ROSE];
+        let transpColors = [TRANSP_LIGHT_GREEN, TRANSP_LIGHT_RED, TRANSP_LIGHT_BLUE, TRANSP_LIGHT_PURPLE, TRANSP_LIGHT_ORANGE, TRANSP_LIGHT_ROSE];
+        let colors       = [       LIGHT_GREEN,        LIGHT_RED,        LIGHT_BLUE,        LIGHT_PURPLE,        LIGHT_ORANGE,        LIGHT_ROSE];
 
         for(let i = 0; i < monotones.length; i++)
         {
             const monotone = monotones[i];
-            monotone.fillColor = colors[i % colors.length];
+            monotone.fillColor = transpColors[i % colors.length];
             monotone.borderColor = colors[i % colors.length];
-            monotone.borderWidth = 1;
             monotone.pointsVisible = false;
         }
 
         for(let i = 0; i < hardDiagonals.length; i++)
         {
             const diagonal = hardDiagonals[i];
-            diagonal.width = 5;
+            diagonal.width = 4;
             diagonal.color = BLACK;
         }
 

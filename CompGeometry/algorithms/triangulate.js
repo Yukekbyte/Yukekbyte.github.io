@@ -398,7 +398,7 @@ async function animateTriangulate(polygon, interval)
     //#######################
     // draw initial polygon
     canvas.polygons = [polygon];
-    canvas.polygons[0].fillColor = LIGHT_GREEN;
+    canvas.polygons[0].fillColor = TRANSP_LIGHT_GREEN;
     redrawCanvas();
     //#######################
 
@@ -407,14 +407,14 @@ async function animateTriangulate(polygon, interval)
 
     //####################
     // color monotones
-    let colors = [LIGHT_GREEN, LIGHT_RED, LIGHT_BLUE, LIGHT_PURPLE, LIGHT_ORANGE, LIGHT_ROSE];
+    let transpColors = [TRANSP_LIGHT_GREEN, TRANSP_LIGHT_RED, TRANSP_LIGHT_BLUE, TRANSP_LIGHT_PURPLE, TRANSP_LIGHT_ORANGE, TRANSP_LIGHT_ROSE];
+    let colors       = [       LIGHT_GREEN,        LIGHT_RED,        LIGHT_BLUE,        LIGHT_PURPLE,        LIGHT_ORANGE,        LIGHT_ROSE];
 
     for(let i = 0; i < monotones.length; i++)
     {
         const monotone = monotones[i];
-        monotone.fillColor = colors[i % colors.length];
+        monotone.fillColor = transpColors[i % colors.length];
         monotone.borderColor = colors[i % colors.length];
-        monotone.borderWidth = 1;
         monotone.pointsVisible = false;
     }
 
@@ -434,9 +434,10 @@ async function animateTriangulate(polygon, interval)
     for(const monotone of monotones)
     {
         //#######
-        // color monotone LIGHT_TEAL
-        const originalColor = monotone.fillColor;
-        monotone.fillColor = LIGHT_TEAL;
+        // color monotone a different color
+        const originalBorderColor = monotone.borderColor;
+        const originalFillColor = monotone.fillColor;
+        monotone.fillColor = TRANSP_LIGHT_TEAL;
         monotone.borderColor = LIGHT_TEAL;
 
         redrawCanvas();
@@ -451,8 +452,8 @@ async function animateTriangulate(polygon, interval)
 
         //#######
         // color monotone back
-        monotone.fillColor = originalColor;
-        monotone.borderColor = originalColor;
+        monotone.fillColor = originalFillColor;
+        monotone.borderColor = originalBorderColor;
 
         redrawCanvas();
         await delay(interval);
@@ -799,7 +800,7 @@ async function animateMakeMonotone(polygon, interval)
 
         //####
         canvas.lines.push(line);
-        line.width = 5;
+        line.width = 4;
         redrawCanvas();
         await delay(interval);
         //####
@@ -868,13 +869,13 @@ async function animateTriangulateMonotone(polygon, interval)
     let stack = [points[0], points[1]];
 
     //#######
-    points[0].fillColor = BLUE;
-    points[0].borderColor = BLUE;
+    points[0].fillColor = LIGHT_TEAL;
+    points[0].borderColor = LIGHT_TEAL;
     redrawCanvas();
     await delay(interval);
 
-    points[1].fillColor = BLUE;
-    points[1].borderColor = BLUE;
+    points[1].fillColor = LIGHT_TEAL;
+    points[1].borderColor = LIGHT_TEAL;
     redrawCanvas();
     await delay(interval);
     //#######
@@ -919,8 +920,8 @@ async function animateTriangulateMonotone(polygon, interval)
             stack.push(top, p);
 
             //#####
-            p.fillColor = BLUE;
-            p.borderColor = BLUE;
+            p.fillColor = LIGHT_TEAL;
+            p.borderColor = LIGHT_TEAL;
             redrawCanvas();
             await delay(interval);
             //#####
@@ -950,13 +951,13 @@ async function animateTriangulateMonotone(polygon, interval)
             stack.push(popped, p);
 
             //#####
-            popped.fillColor = BLUE;
-            popped.borderColor = BLUE;
+            popped.fillColor = LIGHT_TEAL;
+            popped.borderColor = LIGHT_TEAL;
             redrawCanvas();
             await delay(interval);
 
-            p.fillColor = BLUE;
-            p.borderColor = BLUE;
+            p.fillColor = LIGHT_TEAL;
+            p.borderColor = LIGHT_TEAL;
             redrawCanvas();
             await delay(interval);
             //#####
