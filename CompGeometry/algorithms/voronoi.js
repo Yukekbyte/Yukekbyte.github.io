@@ -502,6 +502,14 @@ function completeSide(edge, event)
 
 function areDiverging(breakpoint1, breakpoint2, y)
 {
+    // on the same edge -> diverging
+    if((breakpoint1.looseEdge.pL == breakpoint2) ||
+       (breakpoint1.looseEdge.pR == breakpoint2))
+    {
+        console.log("used");
+        return true;
+    }
+
     const eps = 0.000001;
     const p1 = breakpoint1.getCo(y-eps); // can be funky with epsilson (0.1e-5 not enough and 0.1e-7 too much)
     const p2 = breakpoint1.getCo(y-20);
@@ -556,7 +564,7 @@ async function animateVoronoi(points, interval)
     //#######
     var nextY = CANVAS_HEIGHT;
     var bpOnScreen = false;   // we want to stop animating when no more breakpoints on screen
-    var bpYetToAppear = true; // EXCEPT when there haven't been any breakpoints on screen yet (first arcs)
+    var bpYetToAppear = true; // EXCEPT when there haven't been any breakpoints on screen yet (first arc)
     //#######
 
     while(events.length > 0 && (bpOnScreen || bpYetToAppear))
@@ -579,6 +587,14 @@ async function animateVoronoi(points, interval)
         await delay(interval);
     }
 
+    // keep going untill sweepline is completely off screen
+    while(nextY > -10)
+    {
+        nextY -= 1;
+        drawVoronoi()
+        await delay(interval);
+    }
+
     // keep going until all breakpoints are off screen
     while(bpOnScreen || bpYetToAppear)
     {
@@ -597,9 +613,18 @@ async function animateVoronoi(points, interval)
             break;
     }
 
+    // redraw diagram at the end for some edge cases where a breakpoint still has to get on screen but bpYetToApprear already false
     canvas.parabolas = [];
+    const edges = voronoiDiagram(points);
+    let lines = [];
+    for(const edge of edges)
+    {
+        edge.pL.radius = 0;
+        edge.pR.radius = 0;
+        lines.push(new Line(edge.pL, edge.pR, 4, BLUE));
+    }
+    canvas.lines = lines;
     redrawCanvas();
-    console.log("stopped");
 
     TIMEOUTS.clearAllTimeouts();
 

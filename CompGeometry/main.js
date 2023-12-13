@@ -783,6 +783,47 @@ function generateRandomInput()
     enableGenerate();
 }
 
+function generateInterestingInput()
+{
+    clearCanvas();
+
+    switch(algorithm)
+    {
+        case CXH:
+            canvas.points = generateCircleOfPoints(inputSize);
+            inputType = POINTS;
+            break;
+        case CH2:
+            canvas.points = generateTriangleWithPoints(inputSize);
+            inputType = POINTS;
+            break;
+        case TRI:
+            canvas.polygons = [generateRandomStarPolygon(inputSize)];
+            inputType = POLYGON;
+            break;
+        case LIS:
+            if(Math.random() < 0.5)
+                canvas.lines = generateVerticalLines(inputSize);
+            else
+                canvas.lines = generateHorizontalLines(inputSize);
+            inputType = LINES;
+            break;
+        case ART:
+            canvas.points = generateSquareOfPoints(inputSize);
+            inputType = POINTS;
+            break;
+        case VOR:
+            canvas.points = generateSpiral(inputSize);
+            inputType = POINTS;
+            break;
+    }
+
+    generateAlgorithm(false);
+    canvasAlgorithm = algorithm;
+    enableInputSize();
+    enableGenerate();
+}
+
 function addInput(amount)
 {
     switch(inputType)
@@ -961,6 +1002,183 @@ function generateRandomStarPolygon(n)
 
     const poly = new Polygon(points);
     return poly;
+}
+
+function generateCircleOfPoints(n)
+{
+    const center = new Point(CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
+    const r = 1.2*CANVAS_HEIGHT/3;
+
+    let circle = [];
+
+    for(let rad = 0; rad < 2*3.14159; rad += 2*3.14159/n)
+    {
+        const dx = r*Math.sin(rad);
+        const dy = r*Math.cos(rad);
+        const noise = 0.3 * Math.random();
+
+        const p = new Point(center.x + dx + noise, center.y + dy + noise);
+        circle.push(p);
+    }
+
+    return circle;
+}
+
+// noise function not working properly
+function generateSquareOfPoints(n)
+{
+    const size = CANVAS_HEIGHT * 2/3;
+    const topLeft = new Point(CANVAS_WIDTH/2 - size/2, CANVAS_HEIGHT/2 + size/2);
+    
+    const step = 4*size/n;
+    
+    let square = [topLeft];
+    let prev = topLeft;
+    let gap = 0;
+    let noise;
+    let add;
+    resetNoise();
+
+    // left side
+    while(prev.y > topLeft.y - size + 1.1*step)
+    {
+        const curr = new Point(topLeft.x-noise, prev.y-step);
+        refreshNoise();
+        square.push(curr);
+        prev = curr;
+    }
+    resetNoise();
+
+    // bottom
+    gap = prev.y - (topLeft.y - size);
+    prev = new Point(prev.x+step-gap, topLeft.y-size);
+    square.push(prev);
+
+    while(prev.x < topLeft.x + size - 1.1*step)
+    {
+        const curr = new Point(prev.x+step, topLeft.y-size-noise);
+        refreshNoise();
+        square.push(curr);
+        prev = curr;
+    }
+    resetNoise();
+
+    // right
+    gap = topLeft.x + size - prev.x;
+    prev = new Point(topLeft.x+size, prev.y+step-gap);
+    square.push(prev);
+
+    while(prev.y < topLeft.y - 1.1*step)
+    {
+        const curr = new Point(topLeft.x+size+noise, prev.y+step);
+        refreshNoise();
+        square.push(curr);
+        prev = curr;
+    }
+    resetNoise();
+
+    // top
+    gap = topLeft.y - prev.y;
+    prev = new Point(prev.x-step+gap, topLeft.y);
+    square.push(prev);
+    while(prev.x > topLeft.x + 1.1*step)
+    {
+        const curr = new Point(prev.x-step, topLeft.y+noise);
+        refreshNoise();
+        square.push(curr);
+        prev = curr;
+    }
+    topLeft.y += noise;
+    
+    return square;
+
+
+    function refreshNoise()
+    {
+        add += 1;
+        //noise = Math.log10(add) + 0.01*add + Math.random() * 0.000001;
+        noise = 1*Math.sqrt(add) + Math.random() * 0.000001;
+        //noise = add + Math.random() * 0.000001;
+        console.log(noise);
+    }
+
+    function resetNoise()
+    {
+        add = 2;
+        //noise = Math.log10(add) + 0.01*add + Math.random() * 0.000001;
+        noise = 1*Math.sqrt(add) + Math.random() * 0.000001;
+        //noise = add + Math.random() * 0.000001;
+        console.log("RESET");
+        console.log(noise);
+    }
+}
+
+function generateTriangleWithPoints(n)
+{
+    const p0 = new Point(CANVAS_WIDTH/2, 0.9*CANVAS_HEIGHT);
+    const p1 = new Point(0.1*CANVAS_WIDTH, 0.1*CANVAS_HEIGHT);
+    const p2 = new Point(0.9*CANVAS_WIDTH, 0.1*CANVAS_HEIGHT);
+
+    let triangle = [p0, p1, p2];
+
+    for(let i = 3; i < n; i++)
+    {
+        let p;
+        do
+        {
+            const x = Math.random() * CANVAS_WIDTH;
+            const y = Math.random() * CANVAS_HEIGHT;
+            p = new Point(x, y);
+        } while(!inTriangle(p))
+        triangle.push(p);
+    }
+
+    return triangle;
+
+    function inTriangle(p)
+    {
+        if(cross(p0, p1, p) < 0)
+            return false;
+        if(cross(p2, p0, p) < 0)
+            return false;
+        if(cross(p1, p2, p) < 0)
+            return false;
+        return true;
+    }
+}
+
+function generateVerticalLines(n)
+{
+
+}
+
+function generateHorizontalLines(n)
+{
+
+}
+
+function generateSpiral(n)
+{
+    const center = new Point(CANVAS_WIDTH/2, CANVAS_HEIGHT/2);
+    const r = 0.25*CANVAS_HEIGHT/3;
+    const rotations = 3.4223246;
+    const pi = 3.14159;
+
+    let spiral = [];
+
+    for(let rad = 0; rad < rotations*2*pi; rad += rotations*2*pi/n)
+    {
+        const dx = ((0.1*rad/rotations*2*pi + 1.5)*r)*Math.sin(rad);
+        const dy = ((0.1*rad/rotations*2*pi + 1.5)*r)*Math.cos(rad);
+        //const dx = (Math.sqrt(rad)*r)*Math.sin(rad);
+        //const dy = (Math.sqrt(rad)*r)*Math.cos(rad);
+        const noise = 0.1 * Math.random();
+
+        const p = new Point(center.x + dx + noise, center.y + dy + noise);
+        spiral.push(p);
+    }
+
+    return spiral;
 }
 
 
