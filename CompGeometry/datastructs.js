@@ -8,6 +8,7 @@ class Point
         this.borderWidth = borderWidth;
         this.borderColor = borderColor;
         this.fillColor = fillColor;
+        this.selected = false;
     }
 }
 

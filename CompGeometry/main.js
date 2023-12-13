@@ -379,6 +379,11 @@ function drawPoint(p)
 
 async function selectPoint(p, select)
 {
+    // only allow a point to be selected once
+    if(p.selected)
+        return;
+    p.selected = true;
+
     // point must be in canvas to be animated
     if(!canvas.points.includes(p))
         canvas.points.push(p);
@@ -405,11 +410,14 @@ async function selectPoint(p, select)
     id = setInterval(sizePoint, ms_between_redraws, p, shrink_increment);
     await new Promise((resolve, reject) => setTimeout(resolve, shrink_ms));
     clearInterval(id);
+
+    p.selected = false;
 }
 
 function sizePoint(p, increment)
 {
-    p.radius += increment;
+    if(p.radius + increment > 0)
+        p.radius += increment;
     redrawCanvas();
 }
 
@@ -620,7 +628,7 @@ function generateConvexHull2(animate)
     clearCanvas();
 
     if(animate)
-        animateConvexHull2(points, 500/speed);
+        animateConvexHull2(points, 250/speed);
     else
     {
         const hull = convexHull2(points);
@@ -646,7 +654,7 @@ function generateIntersections(animate)
     clearCanvas();
 
     if(animate)
-        animateIntersections(lines, 1000/speed);
+        animateIntersections(lines, 800/speed);
     else
     {
         const inters = intersections(lines);
@@ -798,7 +806,7 @@ function generateInterestingInput()
             inputType = POINTS;
             break;
         case TRI:
-            canvas.polygons = [generateRandomStarPolygon(inputSize)];
+            canvas.polygons = [generateFunnelPolygon(inputSize)];
             inputType = POLYGON;
             break;
         case LIS:
@@ -1011,7 +1019,7 @@ function generateCircleOfPoints(n)
 
     let circle = [];
 
-    for(let rad = 0; rad < 2*3.14159; rad += 2*3.14159/n)
+    for(let rad = 0; circle.length < n; rad += 2*3.14159/n)
     {
         const dx = r*Math.sin(rad);
         const dy = r*Math.cos(rad);
@@ -1149,12 +1157,51 @@ function generateTriangleWithPoints(n)
 
 function generateVerticalLines(n)
 {
+    let lines = [];
+    const step = CANVAS_WIDTH/(n+2);
+    for(let i = 0; i < n; i++)
+    {
+        const x = 1.5*step + i*step;
+        const p = new Point(x + 0.01*Math.random(), CANVAS_HEIGHT/2 + (n-i+2)/(n+2)*0.4*CANVAS_HEIGHT + 0.01*Math.random());
+        const q = new Point(x + 0.01*Math.random(), CANVAS_HEIGHT/2 - (n-i+2)/(n+2)*0.4*CANVAS_HEIGHT + 0.01*Math.random());
+        p.radius *= 0.9;
+        q.radius *= 0.9;
 
+        const line = new Line(p, q, undefined, LIME);
+        lines.push(line);
+        if(i == 0)
+            console.log(line);
+    }
+
+
+    return lines;
 }
 
 function generateHorizontalLines(n)
 {
+    let lines = [];
+    const step = CANVAS_HEIGHT/(n+2);
+    for(let i = 0; i < n; i++)
+    {
+        const y = 1.5*step + i*step;
+        let dx;
+        if(i < n/2)
+            dx = (i+2)/(n+2)*0.8*CANVAS_WIDTH;
+        else
+            dx = (n-i+2)/(n+2)*0.8*CANVAS_WIDTH;
+        const p = new Point(CANVAS_WIDTH/2 + dx + 0.01*Math.random(), y - Math.random());
+        const q = new Point(CANVAS_WIDTH/2 - dx + 0.01*Math.random(), y + Math.random());
+        p.radius *= 0.9;
+        q.radius *= 0.9;
 
+        const line = new Line(p, q, undefined, LIME);
+        lines.push(line);
+        if(i == 0)
+            console.log(line);
+    }
+
+
+    return lines;
 }
 
 function generateSpiral(n)
@@ -1166,7 +1213,7 @@ function generateSpiral(n)
 
     let spiral = [];
 
-    for(let rad = 0; rad < rotations*2*pi; rad += rotations*2*pi/n)
+    for(let rad = 0; spiral.length < n; rad += rotations*2*pi/n)
     {
         const dx = ((0.1*rad/rotations*2*pi + 1.5)*r)*Math.sin(rad);
         const dy = ((0.1*rad/rotations*2*pi + 1.5)*r)*Math.cos(rad);
@@ -1179,6 +1226,36 @@ function generateSpiral(n)
     }
 
     return spiral;
+}
+
+function generateFunnelPolygon(n)
+{
+    const top = new Point(CANVAS_WIDTH/2, 0.9*CANVAS_HEIGHT);
+    let funnel = [top];
+
+    for(let t = 0; t <= 1; t += 1/(n-2))
+    {
+        const x = expinterp(CANVAS_WIDTH/2, 7*CANVAS_WIDTH/8, t);
+        const y = lerp(0.85*CANVAS_HEIGHT, 0.15*CANVAS_HEIGHT, t);
+        const p = new Point(x, y);
+        funnel.push(p);
+    }
+
+    const bottom = new Point(CANVAS_WIDTH/4, 0.1*CANVAS_HEIGHT);
+    funnel.push(bottom);
+
+    return new Polygon(funnel.reverse());
+
+    function expinterp(a, b, t)
+    {
+        return a*Math.pow(b/a, t);
+        //return (b-a)*2*t/(t*t+1) + a;
+    }
+
+    function lerp(a, b, t)
+    {
+        return a * (1 - t) + b * t;
+    }
 }
 
 
