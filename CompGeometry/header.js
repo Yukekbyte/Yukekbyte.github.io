@@ -45,12 +45,31 @@ const ART = 4;
 const VOR = 5;
 
 const INFO = ["<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Graham's Scan: Convex hull</h2>\
-    <p align=\"justify\">Algorithm explanation coming soon.</p>\
-    <p>Second paragraph comes here.</p>",
+    <p align=\"justify\">Graham's scan is an algorithm for calculating the convex hull of a given set of points. The algorithm works as follows: \
+    First, the lowest point p0 of the whole set is calculated. This point is garanteed to be in the convex hull. Then we sort all the points according \
+    to their angle with p0. The sorting order is visualised by the color of the points (red is first and blue is last). Now the hull can be calculated. \
+    We start from p0 and work our way through the points in order. We connect each point to the hull and check if the angle created by adding this new point \
+    creates a concavity, this happens when the last 2 edges have an inside angle of more than 180 degrees. If this is the case. We discard the second to \
+    last point (visualised by making the edges and point red) and reevaluate the last 2 edges again. If the inside angle was less than 180 degrees, we can connect \
+    another point. Once we have arrived back at p0, the algorithm is done.</p>\
+    <p>Don't let the fast visualisation fool you, sorting the points is the expensive step. Actually calculating the hull afterwards is done in lineair time. \
+    Becasue we have to use a sorting algorithm (like quicksort in this case), the time complexity of Graham's scan is O(nlogn).</p>\
+    <p>The Best case layout would be a set of points where all points lay on the convex hull, e.g. a circle. The hull caculating step is then performed without discarding \
+    any points. The sorting algorithm will probably not be impacted by the layout of the points (depending on the sorting algorithm used).</p>",
 
     "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Jarvis' March: Convex hull</h2>\
-    <p align=\"justify\">Algorithm explanation coming soon.</p>\
-    <p>Second paragraph comes here.</p>",
+    <p align=\"justify\">Jarvis' march, also known as the giftwrapping algorithm, is an algorithm that calculates the convex hull of a given set of points. \
+    Jarvis' march is a more naive approach to calculating the convex hull compared to Graham's scan. You can think of it as Graham's scan without sorting the points first. This algorithm also starts by finding the lowest point in the set. \
+    This point is guaranteed to be part of the convex hull. Then at each step, we iterate through all the points to find the next point on the hull. This is done by \
+    first choosing a point at random. For every other point, we then check if this new point lies more to the 'outside' of the set then our current point. If so, \
+    we choose that point instead (in blue). To test if a new point lies more to the outside, we calculate the inside angle of the edge of the new point (in blue). If adding the new point creates a concavity \
+    with the edge we already have (in black), we choose the new point. Else the angle is less than 180 degrees, so we keep our current point and discard the new point (discards are visualised by making the point red). \
+    The algorithm stops if the point chosen after a loop, is the first point we started with.</p>\
+    <p>We skip the expensive sorting step in Graham's scan but by doing so we lose the ability to calculate the convex hull afterwards in lineair time. We do loop over all the points a lot so it might seem \
+    like a quadratic time complexity. Luckily after each loop, we find a point on the convex hull so we can stop looping after we found all of them. Let's say there are k points on the convex hull and n points in total. Jarvis' march then \
+    runs in O(nk) time.</p>\
+    <p>Given that we don't know the amount of points on the hull, this algorithm is output sensitive. A best case scenario would be that k is small, perhaps k = 3. \
+    Then the algorithm only loops through all the points 3 times, making its runtime lineair.</p>",
 
     "<img src=\"symbols/info_symbol.png\" height=\"50\"> <h2>Polygon Triagulation</h2>\
     <p align=\"justify\">Algorithm explanation coming soon.</p>\

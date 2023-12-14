@@ -383,6 +383,7 @@ async function selectPoint(p, select)
     if(p.selected)
         return;
     p.selected = true;
+    const r = p.radius;
 
     // point must be in canvas to be animated
     if(!canvas.points.includes(p))
@@ -411,6 +412,7 @@ async function selectPoint(p, select)
     await new Promise((resolve, reject) => setTimeout(resolve, shrink_ms));
     clearInterval(id);
 
+    p.radius = r;
     p.selected = false;
 }
 
@@ -1023,7 +1025,7 @@ function generateCircleOfPoints(n)
     {
         const dx = r*Math.sin(rad);
         const dy = r*Math.cos(rad);
-        const noise = 0.3 * Math.random();
+        const noise = 0.75 * Math.random();
 
         const p = new Point(center.x + dx + noise, center.y + dy + noise);
         circle.push(p);
@@ -1123,11 +1125,11 @@ function generateSquareOfPoints(n)
 
 function generateTriangleWithPoints(n)
 {
-    const p0 = new Point(CANVAS_WIDTH/2, 0.9*CANVAS_HEIGHT);
-    const p1 = new Point(0.1*CANVAS_WIDTH, 0.1*CANVAS_HEIGHT);
-    const p2 = new Point(0.9*CANVAS_WIDTH, 0.1*CANVAS_HEIGHT);
+    const p0 = new Point(CANVAS_WIDTH/2   + 0.01 * Math.random(), 0.9*CANVAS_HEIGHT + 0.01 * Math.random());
+    const p1 = new Point(0.1*CANVAS_WIDTH + 0.01 * Math.random(), 0.1*CANVAS_HEIGHT + 0.01 * Math.random());
+    const p2 = new Point(0.9*CANVAS_WIDTH + 0.01 * Math.random(), 0.1*CANVAS_HEIGHT + 0.01 * Math.random());
 
-    let triangle = [p0, p1, p2];
+    let triangle = [];
 
     for(let i = 3; i < n; i++)
     {
@@ -1140,6 +1142,10 @@ function generateTriangleWithPoints(n)
         } while(!inTriangle(p))
         triangle.push(p);
     }
+
+    triangle.push(p0);
+    triangle.push(p1);
+    triangle.push(p2);
 
     return triangle;
 

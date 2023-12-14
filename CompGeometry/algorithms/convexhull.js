@@ -104,7 +104,7 @@ async function animateConvexHull(points, interval)
         points[i].fillColor = sortingColor(0, n, i);
         points[i].borderColor = sortingColor(0, n, i);
         selectPoint(points[i], true);
-        await delay(interval/3);
+        await delay(interval/5);
     }
     //#####################
 

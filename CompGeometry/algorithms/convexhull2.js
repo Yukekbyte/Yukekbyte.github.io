@@ -85,9 +85,6 @@ async function animateConvexHull2(points, interval)
                 continue;
 
             //########################
-            points[i].borderColor = RED;
-            points[i].fillColor = RED;
-
             const line2 = new Line(points[next], points[i], undefined, BLUE);
             canvas.lines.push(line2);
             
@@ -130,6 +127,11 @@ async function animateConvexHull2(points, interval)
                 {
                     points[i].borderColor = LIGHT_GREEN;
                     points[i].fillColor = LIGHT_GREEN;
+                }
+                else
+                {
+                    points[i].borderColor = RED;
+                    points[i].fillColor = RED;
                 }
 
                 line2.color = RED;
