@@ -9,6 +9,6 @@ did not copy any code or assets.
 
 Update: I added some computational geometry algorithms aswell because I saw most of them in a course I take. I thought it a great way to learn those
 algorithms was to implement them myself. I did not implement all the algorithms that I planned on implementing because it took more time then anticipated.
-This is why the computational geometry page may look a bit bare and perhaps has some bugs (mainly voronoi). 
+This is why the computational geometry page may look a bit bare and perhaps has some bugs (mainly Voronoi). 
 
 Yes, the color palette is not great.
