@@ -7,8 +7,10 @@ That is why the code of the pathfinding algorithms is not commented well (not th
 I got the idea to make this visualizer from https://github.com/clementmihailescu/Pathfinding-Visualizer but I tried to make an original spin-off and
 did not copy any code or assets.
 
-Update: I added some computational geometry algorithms aswell because I saw most of them in a course I take. I thought it a great way to learn those
-algorithms was to implement them myself. I did not implement all the algorithms that I planned on implementing because it took more time then anticipated.
+# Update: Computational Geometry
+
+I added some computational geometry algorithms aswell because I saw most of them in a course I take. I thought a great way to learn these
+algorithms was to implement them myself. I planned on implementing more algorithms but the current onces took more time then anticipated.
 This is why the computational geometry page may look a bit bare and perhaps has some bugs (mainly Voronoi). 
 
 Yes, the color palette is not great.
